@@ -20,13 +20,13 @@ Route::middleware('guest')->group(function () {
          ->name('login.submit');
 
     // Form register
-    Route::get('/register', [LoginController::class, 'showRegisterForm'])
-         ->name('register');
+    // Route::get('/register', [LoginController::class, 'showRegisterForm'])
+    //      ->name('register');
 
     // Proses register
-    Route::post('/register', [LoginController::class, 'register'])
-         ->middleware('log.sensitive')
-         ->name('register.submit');
+    // Route::post('/register', [LoginController::class, 'register'])
+    //      ->middleware('log.sensitive')
+    //      ->name('register.submit');
 });
 
 // Logout (method POST demi keamanan; pakai @csrf di form logout)
