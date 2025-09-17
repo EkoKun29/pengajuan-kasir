@@ -110,6 +110,38 @@
                         <span class="sidebar-text">Notifikasi</span>
                     </a>
                 </li>
+                <li x-data="{ open: false }" class="relative">
+                    <button @click="open = !open" class="flex items-center w-full px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">
+                        <i class="fas fa-users w-5 h-5 mr-3 text-gray-500 group-hover:text-blue-500"></i>
+                        <span class="sidebar-text">Database</span>
+                        <i class="fas fa-chevron-down ml-auto text-gray-400 group-hover:text-blue-500 transition-transform"
+                        :class="{ 'rotate-180': open }"></i>
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <ul x-show="open" x-transition
+                        class="mt-1 ml-8 space-y-1 text-sm text-gray-600">
+                        <li>
+                            <a href="#" 
+                            class="block px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 transition-all">
+                                Nama Karyawan
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" 
+                            class="block px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 transition-all">
+                                Plot
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" 
+                            class="block px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 transition-all">
+                                Nama Barang
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
             @endif
             
             <!-- Menu untuk semua role -->
