@@ -14,12 +14,14 @@ return Application::configure(basePath: dirname(__DIR__))
         // Global middleware
         $middleware->append([
             \App\Http\Middleware\SecurityHeaders::class,
+            \App\Http\Middleware\SessionTimeout::class,
         ]);
         
         // Middleware aliases
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
             'log.sensitive' => \App\Http\Middleware\LogSensitiveActions::class,
+            'session.timeout' => \App\Http\Middleware\SessionTimeout::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

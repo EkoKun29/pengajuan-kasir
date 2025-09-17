@@ -14,7 +14,9 @@ class LoginController extends Controller
 {
      public function showLoginForm()
     {
-        return view('auth.login');
+        // Jika ada pesan timeout dari middleware, tampilkan
+        $timeoutMessage = session('timeout');
+        return view('auth.login', compact('timeoutMessage'));
     }
 
     public function login(Request $request)
