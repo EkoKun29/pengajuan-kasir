@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\NamaBarangController;
 
 
 // hanya bisa diakses tamu (belum login)
@@ -62,6 +63,7 @@ Route::middleware(['auth', 'role:keuangan', 'log.sensitive'])
     ->name('keuangan.')
     ->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'keuanganDashboard'])->name('dashboard');
+        Route::resource('barangs', NamaBarangController::class);
         // Tambahkan resource lain untuk keuangan jika diperlukan
     });
 

@@ -46,12 +46,6 @@ class UserController extends Controller
         return back()->with('success', 'User berhasil ditambahkan!');
     }
 
-    public function show(User $user)
-    {
-        // Jika diperlukan untuk menampilkan detail user dalam halaman terpisah
-        return view('direktur.users.show', compact('user'));
-    }
-
     public function update(Request $request, User $user)
     {
         $rules = [

@@ -134,7 +134,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#" 
+                            <a href="{{ route('keuangan.barangs.index') }}" 
                             class="block px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 transition-all">
                                 Nama Barang
                             </a>
