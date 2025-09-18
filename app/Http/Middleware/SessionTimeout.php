@@ -40,7 +40,7 @@ class SessionTimeout
             Auth::logout();
             $this->session->forget('last_activity');
             $this->session->flash('timeout', 'Anda telah logout otomatis karena tidak ada aktivitas selama 10 menit.');
-            return redirect()->route('login');
+            return redirect('/login');
         }
 
         $this->session->put('last_activity', time());

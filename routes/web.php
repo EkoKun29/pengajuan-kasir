@@ -65,6 +65,20 @@ Route::middleware(['auth', 'role:keuangan', 'log.sensitive'])
         Route::get('/database/plot', [AkunBiayaController::class, 'index'])->name('database.plot');
         Route::get('/database/plot/sync', [AkunBiayaController::class, 'sync'])->name('database.plot.sync');
         
+        //-------------------------------- PENGAJUAN -------------------------------//
+        // Resource dasar untuk pengajuan
+        Route::resource('pengajuans', App\Http\Controllers\PengajuanController::class)->parameter('pengajuans', 'pengajuan');
+        
+        // Nested routes untuk detail pengajuan - diatur dalam controller yang sama
+        Route::prefix('pengajuans/{pengajuan}')->group(function() {
+            // Detail pengajuan routes
+            Route::get('detail/create', [App\Http\Controllers\PengajuanController::class, 'createDetail'])->name('pengajuans.detail.create');
+            Route::post('detail', [App\Http\Controllers\PengajuanController::class, 'storeDetail'])->name('pengajuans.detail.store');
+            Route::get('detail/{detail}/edit', [App\Http\Controllers\PengajuanController::class, 'editDetail'])->name('pengajuans.detail.edit');
+            Route::put('detail/{detail}', [App\Http\Controllers\PengajuanController::class, 'updateDetail'])->name('pengajuans.detail.update');
+            Route::delete('detail/{detail}', [App\Http\Controllers\PengajuanController::class, 'destroyDetail'])->name('pengajuans.detail.destroy');
+            Route::patch('detail/{detail}/status', [App\Http\Controllers\PengajuanController::class, 'setStatus'])->name('pengajuans.detail.status');
+        });
     });
 
 Route::redirect('/', '/login');
