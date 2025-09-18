@@ -86,6 +86,14 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                 </svg>
                             </a>
+                            {{-- Print Button --}}
+                            <a href="#" title="Print Nota/Invoice" target="_blank"
+                                class="inline-flex items-center p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 9V2h12v7M6 18h12v4H6v-4zM6 14h12v4H6v-4zM6 10h12v4H6v-4z" />
+                                </svg>
+                            </a>
                             {{-- Delete Button --}}
                             <form action="{{ route('keuangan.pengajuans.destroy', $pengajuan) }}" method="POST" class="inline delete-form">
                                 @csrf @method('DELETE')
