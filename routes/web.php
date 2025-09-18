@@ -1,33 +1,26 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AkunBiayaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\NamaBarangController;
+use App\Http\Controllers\NamaKaryawanController;
 
 
-// hanya bisa diakses tamu (belum login)
 Route::middleware('guest')->group(function () {
+    
     // Form login
-    Route::get('/login', [LoginController::class, 'showLoginForm'])
+    Route::get('/login', [LoginController::class, 'login'])
          ->name('login');
 
     // Proses login
-    Route::post('/login', [LoginController::class, 'login'])
+    Route::post('/login', [LoginController::class, 'posts'])
          ->middleware('log.sensitive')
          ->name('login.submit');
-
-    // Form register
-    // Route::get('/register', [LoginController::class, 'showRegisterForm'])
-    //      ->name('register');
-
-    // Proses register
-    // Route::post('/register', [LoginController::class, 'register'])
-    //      ->middleware('log.sensitive')
-    //      ->name('register.submit');
 });
 
 // Logout (method POST demi keamanan; pakai @csrf di form logout)
@@ -62,9 +55,16 @@ Route::middleware(['auth', 'role:keuangan', 'log.sensitive'])
     ->prefix('keuangan')
     ->name('keuangan.')
     ->group(function () {
+        //-------------------------------- DASHBOARD -------------------------------//
         Route::get('/dashboard', [DashboardController::class, 'keuanganDashboard'])->name('dashboard');
+
+        //-------------------------------- DATABASE -------------------------------//
         Route::resource('barangs', NamaBarangController::class);
-        // Tambahkan resource lain untuk keuangan jika diperlukan
+        Route::get('/database/karyawan', [NamaKaryawanController::class, 'index'])->name('database.karyawan');
+        Route::get('/database/karyawan/sync', [NamaKaryawanController::class, 'sync'])->name('database.karyawan.sync');
+        Route::get('/database/plot', [AkunBiayaController::class, 'index'])->name('database.plot');
+        Route::get('/database/plot/sync', [AkunBiayaController::class, 'sync'])->name('database.plot.sync');
+        
     });
 
 Route::redirect('/', '/login');

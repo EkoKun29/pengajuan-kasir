@@ -80,6 +80,7 @@
             opacity: 1;
         }
     </style>
+    @stack('css')
 </head>
 <body class="bg-gray-50 text-gray-900">
     <div class="flex h-screen overflow-hidden">
@@ -98,6 +99,8 @@
             
             <!-- Footer -->
             @include('partials.footer')
+
+            
         </div>
     </div>
 
@@ -263,5 +266,7 @@
     </script>
     
     @yield('scripts')
+
+    @stack('js')
 </body>
 </html>

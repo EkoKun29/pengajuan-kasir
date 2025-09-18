@@ -28,15 +28,17 @@ class SecurityHeaders
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         
         // Content Security Policy
-        $response->headers->set('Content-Security-Policy', 
+        $response->headers->set('Content-Security-Policy',
             "default-src 'self'; " .
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; " .
-            "style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; " .
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.datatables.net https://code.jquery.com; " .
+            "style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.datatables.net; " .
             "img-src 'self' data: https:; " .
-            "font-src 'self' https://cdnjs.cloudflare.com; " .
+            "font-src 'self' https://cdnjs.cloudflare.com https://cdn.datatables.net; " .
             "connect-src 'self'; " .
             "frame-ancestors 'none';"
         );
+
+
 
         return $response;
     }

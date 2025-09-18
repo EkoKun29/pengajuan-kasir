@@ -9,17 +9,16 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
+use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
-     public function showLoginForm()
+     public function login()
     {
-        // Jika ada pesan timeout dari middleware, tampilkan
-        $timeoutMessage = session('timeout');
-        return view('auth.login', compact('timeoutMessage'));
+        return view('auth.login');
     }
 
-    public function login(Request $request)
+    public function posts(Request $request)
     {
         // Rate limiting untuk mencegah brute force
         $this->throttle($request);
@@ -96,38 +95,12 @@ class LoginController extends Controller
         return strtolower($request->input('email')) . '|' . $request->ip();
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
+        Session::flush();
         Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect()->route('login');
+        return redirect('/');
     }
 
-    // public function showRegisterForm()
-    // {
-    //     return view('auth.register');
-    // }
-
-    // public function register(Request $request)
-    // {
-    //     $request->validate([
-    //         'name' => ['required', 'string', 'max:255'],
-    //         'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-    //         'password' => ['required', 'string', 'min:8', 'confirmed'],
-    //     ]);
-
-    //     $user = User::create([
-    //         'name' => $request->name,
-    //         'email' => $request->email,
-    //         'password' => Hash::make($request->password),
-    //         'role' => 'keuangan',
-    //     ]);
-
-    //     Auth::login($user);
-
-    //     return redirect()->route('keuangan.dashboard');
-    // }
 
 }

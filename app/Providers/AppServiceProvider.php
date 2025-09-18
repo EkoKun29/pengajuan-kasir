@@ -21,5 +21,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Schema::defaultStringLength(191);
+        if (app()->environment('local')) {
+            header_remove("Content-Security-Policy");
+        }
     }
 }

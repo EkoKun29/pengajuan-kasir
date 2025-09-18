@@ -65,7 +65,7 @@
             <h2 class="text-3xl font-bold text-gray-800 mb-2">Selamat Datang</h2>
             <p class="text-gray-600">Masuk untuk melanjutkan ke akun Anda</p>
         </div>
-
+{{-- 
         <!-- Social Login Buttons -->
         <div class="space-y-3 mb-6 fade-in-up stagger-3">
             <button class="social-btn w-full flex items-center justify-center px-4 py-3 border border-gray-200 rounded-xl text-gray-700 bg-white hover:bg-gray-50 font-medium shadow-sm">
@@ -94,7 +94,7 @@
             <div class="relative flex justify-center text-sm">
                 <span class="px-4 bg-white text-gray-500 font-medium">atau masuk dengan email</span>
             </div>
-        </div>
+        </div> --}}
 
         <!-- Timeout Message -->
         @if(isset($timeoutMessage))
@@ -172,7 +172,7 @@
             </div>
 
             <!-- Remember Me & Forgot Password -->
-            <div class="flex items-center justify-between">
+            {{-- <div class="flex items-center justify-between">
                 <div class="flex items-center">
                     <input 
                         id="remember" 
@@ -183,10 +183,10 @@
                     >
                     <label for="remember" class="ml-2 block text-sm text-gray-700 font-medium">Ingat Saya</label>
                 </div>
-                {{-- <div class="text-sm">
+                <div class="text-sm">
                     <a href="/forgot-password" class="text-purple-600 hover:text-purple-700 font-medium transition-colors">Lupa password?</a>
-                </div> --}}
-            </div>
+                </div>
+            </div> --}}
 
             <!-- Login Button -->
             <button 

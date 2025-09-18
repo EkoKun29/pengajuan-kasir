@@ -107,7 +107,7 @@
                 <li>
                     <a href="#" class="flex items-center px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">
                         <i class="fas fa-bell w-5 h-5 mr-3 text-gray-500 group-hover:text-blue-500"></i>
-                        <span class="sidebar-text">Notifikasi</span>
+                        <span class="sidebar-text">Pengajuan</span>
                     </a>
                 </li>
                 <li x-data="{ open: false }" class="relative">
@@ -122,13 +122,13 @@
                     <ul x-show="open" x-transition
                         class="mt-1 ml-8 space-y-1 text-sm text-gray-600">
                         <li>
-                            <a href="#" 
+                            <a href="{{ route('keuangan.database.karyawan') }}" 
                             class="block px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 transition-all">
                                 Nama Karyawan
                             </a>
                         </li>
                         <li>
-                            <a href="#" 
+                            <a href="{{ route('keuangan.database.plot') }}" 
                             class="block px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 transition-all">
                                 Plot
                             </a>

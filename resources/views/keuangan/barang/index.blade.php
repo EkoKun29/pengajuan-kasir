@@ -151,11 +151,16 @@
                             <div class="px-6 py-4">
                                 <form method="POST" action="{{ route('keuangan.barangs.update', $barang) }}" class="space-y-4">
                                     @csrf @method('PUT')
-                                    <div class="grid grid-cols-2 gap-4">
+                                    <div class="grid gap-4">
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-2">Nama Barang</label>
                                             <input type="text" name="nama_barang" value="{{ $barang->nama_barang }}" class="w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
                                         </div>
+                                    </div>
+                                    <div class="px-6">
+                                        <small class="form-text text-muted">
+                                        👉 Gunakan huruf <b>KAPITAL</b>.<br>
+                                        </small>
                                     </div>
                                     <div class="flex justify-end space-x-3 pt-4">
                                         <button type="button" @click="toggleModal('edit', {{ $barang->id }})" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium">Batal</button>
@@ -196,12 +201,17 @@
             <div class="px-6 py-4">
                 <form method="POST" action="{{ route('keuangan.barangs.store') }}" id="createForm" class="space-y-4">
                     @csrf
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Nama Barang</label>
                             <input type="text" name="nama_barang" value="{{ old('nama_barang') }}" class="w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Masukkan nama" required>
                         </div>
                 </form>
+            </div>
+            </div>
+            <div class="px-6"><small class="form-text text-muted">
+                👉 Gunakan huruf <b>KAPITAL</b>.<br>
+            </small>
             </div>
             <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
                 <button @click="toggleModal('create')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium">Batal</button>
