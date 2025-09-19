@@ -18,7 +18,6 @@ class Pengajuan extends Model
         'nama_karyawan',
         'divisi',
         'plot',
-        'keperluan_beban',
         'total'
     ];
 

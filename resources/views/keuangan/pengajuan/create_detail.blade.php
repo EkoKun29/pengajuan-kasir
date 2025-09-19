@@ -2,6 +2,8 @@
 @section('title', 'Tambah Detail Pengajuan')
 
 @section('content')
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
+
 <div class="space-y-6">
 
     {{-- HEADER --}}
@@ -48,10 +50,10 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Nama Barang</label>
-                        <select id="nama_barang_id" class="w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                        <select id="nama_barang" name="nama_barang" required>
                             <option value="" disabled selected>Pilih Barang</option>
                             @foreach($namaBarangs as $barang)
-                                <option value="{{ $barang->id }}" data-nama="{{ $barang->nama_barang }}">{{ $barang->nama_barang }}</option>
+                                <option value="{{ $barang->nama_barang }}">{{ $barang->nama_barang }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -65,14 +67,31 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Berpajak</label>
-                        <select id="berpajak" class="w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="Ya">Ya</option>
-                            <option value="Tidak" selected>Tidak</option>
+                        <select id="berpajak" name="berpajak"
+                            class="w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required> 
+                            <option value="" disabled selected>Pilih Ket.Pajak</option>
+                            <option value="BERPAJAK">BERPAJAK</option>
+                            <option value="TIDAK BERPAJAK">TIDAK BERPAJAK</option>
                         </select>
                     </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Keterangan Pajak</label>
-                        <input type="text" id="keterangan_pajak" class="w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Masukkan keterangan pajak">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">3M FAKTUR</label>
+                        <select id="keterangan_pajak" name="keterangan_pajak" required>
+                            <option value="" disabled selected>Pilih 3M Faktur</option>
+                            @foreach($plotList as $plotItem)
+                                <option value="{{ $plotItem->keterangan_pajak }}">{{ $plotItem->keterangan_pajak }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Akun Biaya</label>
+                        <select id="keperluan_beban" name="keperluan_beban" required>
+                            <option value="" disabled selected>Pilih Akun Biaya</option>
+                            @foreach($plotList as $plotItem)
+                                <option value="{{ $plotItem->keperluan_beban }}">{{ $plotItem->keperluan_beban }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
                 <div class="mt-4 flex justify-end">
@@ -99,7 +118,9 @@
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Qty</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Harga</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Total</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Pajak</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Ket. Pajak</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">3M Faktur</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Akun Biaya</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
@@ -153,7 +174,9 @@
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Qty</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Harga</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Total</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Pajak</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Ket. Pajak</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">3M Faktur</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Akun Biaya</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
@@ -161,11 +184,13 @@
                     @foreach($pengajuan->detailPengajuans as $index => $detail)
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $index + 1 }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $detail->namaBarang->nama_barang }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $detail->nama_barang }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $detail->qty }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rp {{ number_format($detail->harga, 0, ',', '.') }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">Rp {{ number_format($detail->total, 0, ',', '.') }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $detail->berpajak }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $detail->keterangan_pajak }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $detail->keperluan_beban }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm space-x-2">
                             <a href="{{ route('keuangan.pengajuans.detail.edit', ['pengajuan' => $pengajuan->id, 'detail' => $detail->id]) }}" class="inline-flex items-center p-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -197,6 +222,8 @@
     @endif
 </div>
 
+
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <script>
 function confirmDelete(form) {
     if (confirm('Apakah Anda yakin ingin menghapus item ini?')) {
@@ -205,6 +232,22 @@ function confirmDelete(form) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+
+    new TomSelect("#nama_barang", {
+        create: false,
+        sortField: {field: "text", direction: "asc"}
+    });
+
+    new TomSelect("#keterangan_pajak", {
+        create: false,
+        sortField: {field: "text", direction: "asc"}
+    });
+
+    new TomSelect("#keperluan_beban", {
+        create: false,
+        sortField: {field: "text", direction: "asc"}
+    });
+
     // Array untuk menyimpan data barang yang akan ditambahkan
     let items = [];
     let totalAmount = 0;
@@ -225,15 +268,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fungsi untuk menambahkan item ke tabel
     function addItemToTable() {
         // Ambil nilai dari form
-        const barangId = document.getElementById('nama_barang_id').value;
-        const barangText = document.getElementById('nama_barang_id').options[document.getElementById('nama_barang_id').selectedIndex]?.text;
+        const barang = document.getElementById('nama_barang').value;
         const qty = parseInt(document.getElementById('qty').value);
         const harga = parseInt(document.getElementById('harga').value);
         const berpajak = document.getElementById('berpajak').value;
         const keteranganPajak = document.getElementById('keterangan_pajak').value;
+        const keperluanBeban = document.getElementById('keperluan_beban').value;
         
         // Validasi input
-        if (!barangId || isNaN(qty) || isNaN(harga) || qty <= 0 || harga < 0) {
+        if (!barang || isNaN(qty) || isNaN(harga) || qty <= 0 || harga < 0) {
             alert('Mohon isi data barang dengan lengkap dan benar.');
             return;
         }
@@ -243,13 +286,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Tambahkan data ke array
         const item = {
-            nama_barang_id: barangId,
-            nama_barang_text: barangText,
+            nama_barang: barang,
             qty: qty,
             harga: harga,
             total: total,
             berpajak: berpajak,
-            keterangan_pajak: keteranganPajak
+            keterangan_pajak: keteranganPajak,
+            keperluan_beban: keperluanBeban
         };
         
         items.push(item);
@@ -292,11 +335,13 @@ document.addEventListener('DOMContentLoaded', function() {
             row.className = 'hover:bg-gray-50 transition-colors';
             row.innerHTML = `
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${index + 1}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${item.nama_barang_text}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${item.nama_barang}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.qty}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatCurrency(item.harga)}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">${formatCurrency(item.total)}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.berpajak}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.keterangan_pajak}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.keperluan_beban}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm space-x-2">
                     <button type="button" class="inline-flex items-center p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors delete-item" data-index="${index}">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -334,11 +379,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Fungsi untuk mereset form
     function resetForm() {
-        document.getElementById('nama_barang_id').selectedIndex = 0;
+        document.getElementById('nama_barang').selectedIndex = 0;
         document.getElementById('qty').value = '';
         document.getElementById('harga').value = '';
         document.getElementById('berpajak').selectedIndex = 1;
         document.getElementById('keterangan_pajak').value = '';
+        document.getElementById('keperluan_beban').value = '';
     }
     
     // Event listener untuk tombol "Tambahkan ke Daftar"

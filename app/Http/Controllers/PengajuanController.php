@@ -49,7 +49,7 @@ class PengajuanController extends Controller
         $namaKaryawans = NamaKaryawan::all();
         
         // Ambil daftar plot untuk dropdown
-        $plotList = AkunBiaya::select('plot')->distinct()->whereNotNull('plot')->where('plot', '!=', '')->get();
+        $plotList = AkunBiaya::all();
         
         // Ambil semua data AkunBiaya untuk digunakan dalam JavaScript
         $akunBiayaList = AkunBiaya::select('plot', 'keperluan_beban')->whereNotNull('plot')->whereNotNull('keperluan_beban')
@@ -72,7 +72,6 @@ class PengajuanController extends Controller
             'nama_karyawan' => 'required|string|max:255',
             'divisi' => 'required|string|max:255',
             'plot' => 'required|string|max:255',
-            'keperluan_beban' => 'required|string|max:255',
         ]);
 
         // Generate nomor surat
@@ -88,7 +87,6 @@ class PengajuanController extends Controller
                 'nama_karyawan' => $validated['nama_karyawan'],
                 'divisi' => $validated['divisi'],
                 'plot' => $validated['plot'],
-                'keperluan_beban' => $validated['keperluan_beban'],
             ]);
 
             DB::commit();
@@ -102,9 +100,6 @@ class PengajuanController extends Controller
         }
     }
 
-    /**
-     * Generate nomor surat otomatis dengan format P/YYYYMMDD/XXXX
-     */
     private function generateNoSurat()
     {
         $today = Carbon::now()->format('Ymd');
@@ -127,18 +122,13 @@ class PengajuanController extends Controller
         return $prefix . sprintf('%04d', $newNumber);
     }
 
-    /**
-     * Display the specified pengajuan.
-     */
+
     public function show(Pengajuan $pengajuan)
     {
         $pengajuan->load('detailPengajuans');
         return view('keuangan.pengajuan.show', compact('pengajuan'));
     }
 
-    /**
-     * Show the form for editing the specified pengajuan.
-     */
     public function edit(Pengajuan $pengajuan)
     {
         // Ambil daftar nama barang untuk dropdown
@@ -167,7 +157,6 @@ class PengajuanController extends Controller
             'nama_karyawan' => 'required|string|max:255',
             'divisi' => 'required|string|max:255',
             'plot' => 'required|string|max:255',
-            'keperluan_beban' => 'required|string|max:255',
         ]);
 
         $pengajuan->update($validated);
@@ -201,8 +190,9 @@ class PengajuanController extends Controller
      */
     public function createDetail(Pengajuan $pengajuan)
     {
+        $plotList = AkunBiaya::all();
         $namaBarangs = NamaBarang::all();
-        return view('keuangan.pengajuan.create_detail', compact('pengajuan', 'namaBarangs'));
+        return view('keuangan.pengajuan.create_detail', compact('pengajuan', 'namaBarangs', 'plotList'));
     }
     
     /**
@@ -226,11 +216,12 @@ class PengajuanController extends Controller
             // Loop through each item and create detail pengajuan
             foreach ($itemsData as $item) {
                 $pengajuan->detailPengajuans()->create([
-                    'nama_barang_id' => $item['nama_barang_id'],
+                    'nama_barang' => $item['nama_barang'],
                     'qty' => $item['qty'],
                     'harga' => $item['harga'],
                     'berpajak' => $item['berpajak'] ?? 'Tidak',
                     'keterangan_pajak' => $item['keterangan_pajak'] ?? null,
+                    'keperluan_beban' => $item['keperluan_beban'] ?? null,
                     'status_persetujuan' => 'pending', // Default status
                 ]);
             }
@@ -265,20 +256,22 @@ class PengajuanController extends Controller
     public function updateDetail(Request $request, Pengajuan $pengajuan, DetailPengajuan $detail)
     {
         $validated = $request->validate([
-            'nama_barang_id' => 'required|exists:nama_barangs,id',
+            'nama_barang' => 'required|exists:nama_barangs,id',
             'qty' => 'required|numeric|min:1',
             'harga' => 'required|numeric|min:0',
             'berpajak' => 'nullable|in:Ya,Tidak',
+            'keperluan_beban' => 'nullable|string|max:255',
             'keterangan_pajak' => 'nullable|string|max:255',
         ]);
         
         DB::beginTransaction();
         try {
             $detail->update([
-                'nama_barang_id' => $validated['nama_barang_id'],
+                'nama_barang' => $validated['nama_barang'],
                 'qty' => $validated['qty'],
                 'harga' => $validated['harga'],
                 'berpajak' => $validated['berpajak'] ?? 'Tidak',
+                'keperluan_beban' => $validated['keperluan_beban'],
                 'keterangan_pajak' => $validated['keterangan_pajak'],
             ]);
             

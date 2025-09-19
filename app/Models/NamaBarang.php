@@ -17,6 +17,6 @@ class NamaBarang extends Model
      */
     public function detailPengajuans()
     {
-        return $this->hasMany(DetailPengajuan::class, 'nama_barang_id', 'id');
+        return $this->hasMany(DetailPengajuan::class, 'nama_barang', 'id');
     }
 }
