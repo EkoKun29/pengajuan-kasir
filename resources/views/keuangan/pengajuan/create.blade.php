@@ -2,6 +2,8 @@
 @section('title', 'Tambah Pengajuan')
 
 @section('content')
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
+
 <div class="space-y-6">
 
     {{-- HEADER --}}
@@ -33,56 +35,42 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Pengajuan</label>
                     <input type="date" name="tgl_pengajuan" value="{{ old('tgl_pengajuan', date('Y-m-d')) }}" class="w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
                 </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Nomor Surat</label>
-                    <input type="text" name="no_surat" value="{{ $contohNomorSurat ?? 'P/'.date('Ymd').'/0001' }}" class="w-full border-gray-300 bg-gray-50 text-blue-600 rounded-lg px-3 py-2" readonly>
-                    <p class="text-xs text-gray-500 mt-1">Nomor surat akan otomatis digenerate dengan format P/YYYYMMDD/XXXX</p>
-                </div>
-                
+
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Nama Karyawan</label>
-                    <select name="nama_karyawan" id="nama_karyawan" class="w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
-                        <option value="" disabled selected>Pilih karyawan</option>
-                        @foreach($namaKaryawans as $karyawan)
-                            <option value="{{ $karyawan->nama_karyawan }}" data-divisi="{{ $karyawan->divisi }}">{{ $karyawan->nama_karyawan }}</option>
+                    <select id="nama_karyawan" name="nama_karyawan" required
+                        class="w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="" disabled selected>Pilih Karyawan</option>
+                        @foreach ($namaKaryawans as $karyawan)
+                            <option value="{{ $karyawan->nama_karyawan }}" data-divisi="{{ $karyawan->divisi }}">
+                                {{ $karyawan->nama_karyawan }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Divisi</label>
-                    <input 
-                        type="text" 
-                        name="divisi" 
-                        id="divisi" 
-                        class="w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
-                        placeholder="Masukkan divisi" 
-                        readonly required
-                    >
-                </div>
-                
+
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Plot</label>
-                    <select name="plot" id="plot" class="w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
-                        <option value="" disabled selected>Pilih plot</option>
+                    <select id="plot" name="plot" id="plot" required>
+                        <option value="" disabled selected>Pilih Plot Yang Dipakai</option>
                         @foreach($plotList as $plotItem)
                             <option value="{{ $plotItem->plot }}">{{ $plotItem->plot }}</option>
                         @endforeach
                     </select>
                 </div>
-                
+
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Keperluan/Beban</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Divisi</label>
                     <input 
                         type="text" 
-                        name="keperluan_beban" 
-                        id="keperluan_beban" 
-                        class="w-full border-gray-300 rounded-lg px-3 py-2 bg-gray-50 focus:ring-0 focus:border-gray-300" 
-                        placeholder="Keperluan/Beban akan terisi otomatis" 
-                        readonly required
-                    >
+                        id="divisi"
+                        name="divisi" 
+                        class="w-full border-gray-300 bg-gray-50 text-blue-600 rounded-lg px-3 py-2" 
+                        readonly>
+                    <p class="text-xs text-gray-500 mt-1">Divisi akan otomatis terisi berdasarkan karyawan yang dipilih</p>
                 </div>
+                
+                
             </div>
         </div>
 
@@ -109,43 +97,31 @@
     </form>
 </div>
 
+
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Auto-fill divisi when nama_karyawan is selected
-    document.getElementById('nama_karyawan').addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        const divisiValue = selectedOption.getAttribute('data-divisi');
-        const divisiField = document.getElementById('divisi');
-        
-        // Set the divisi value from the selected karyawan
-        if (divisiField) {
-            divisiField.value = divisiValue || '';
-        }
+    new TomSelect("#nama_karyawan", {
+        create: false,
+        sortField: {field: "text", direction: "asc"}
     });
 
-    // Data akun biaya untuk keperluan beban
-    const akunBiayaList = @json($akunBiayaList);
-    
-    // Auto-fill keperluan_beban when plot is selected
-    document.getElementById('plot').addEventListener('change', function() {
-        const selectedPlot = this.value;
-        const keperluanBebanField = document.getElementById('keperluan_beban');
-        
-        // Reset field
-        keperluanBebanField.value = '';
-        
-        // Find the first matching keperluan_beban for the selected plot
-        const matchingItem = akunBiayaList.find(item => 
-            item.plot === selectedPlot && item.keperluan_beban && item.keperluan_beban.trim() !== ''
-        );
-        
-        // Set the keperluan_beban value if found
-        if (matchingItem) {
-            keperluanBebanField.value = matchingItem.keperluan_beban;
-        } else {
-            keperluanBebanField.value = 'Tidak ada data keperluan/beban untuk plot ini';
-        }
+    new TomSelect("#plot", {
+        create: false,
+        sortField: {field: "text", direction: "asc"}
     });
+
+    const selectKaryawan = document.getElementById('nama_karyawan');
+    const inputDivisi   = document.getElementById('divisi');
+
+    selectKaryawan.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const divisi = selectedOption.getAttribute('data-divisi') || '';
+        inputDivisi.value = divisi;
+    });
+    
+
+    
 });
 </script>
 @endsection

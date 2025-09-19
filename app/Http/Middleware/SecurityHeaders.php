@@ -31,12 +31,13 @@ class SecurityHeaders
         $response->headers->set('Content-Security-Policy',
             "default-src 'self'; " .
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.datatables.net https://code.jquery.com; " .
-            "style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.datatables.net; " .
+            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.datatables.net; " .
             "img-src 'self' data: https:; " .
-            "font-src 'self' https://cdnjs.cloudflare.com https://cdn.datatables.net; " .
-            "connect-src 'self'; " .
+            "font-src 'self' https://cdnjs.cloudflare.com https://cdn.datatables.net https://cdn.jsdelivr.net; " .
+            "connect-src 'self' https://cdn.jsdelivr.net; " .
             "frame-ancestors 'none';"
         );
+
 
 
 

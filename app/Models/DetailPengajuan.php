@@ -15,14 +15,15 @@ class DetailPengajuan extends Model
     
     protected $fillable = [
         'id_pengajuan',
-        'nama_barang_id',
+        'nama_barang',
         'qty',
         'harga',
         'total',
         'berpajak',
         'keterangan_pajak',
         'status_persetujuan',
-        'keterangan_revisi'
+        'keterangan_revisi',
+        'keperluan_beban'
     ];
 
     /**
@@ -53,6 +54,6 @@ class DetailPengajuan extends Model
      */
     public function namaBarang()
     {
-        return $this->belongsTo(NamaBarang::class, 'nama_barang_id', 'id');
+        return $this->belongsTo(NamaBarang::class, 'nama_barang', 'id');
     }
 }
