@@ -50,16 +50,6 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Plot</label>
-                    <select id="plot" name="plot" id="plot" required>
-                        <option value="" disabled selected>Pilih Plot Yang Dipakai</option>
-                        @foreach($plotList as $plotItem)
-                            <option value="{{ $plotItem->plot }}">{{ $plotItem->plot }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Divisi</label>
                     <input 
                         type="text" 
@@ -69,7 +59,16 @@
                         readonly>
                     <p class="text-xs text-gray-500 mt-1">Divisi akan otomatis terisi berdasarkan karyawan yang dipilih</p>
                 </div>
-                
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Plot</label>
+                    <select name="plot" id="plot" required class="w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="" disabled selected>Pilih Plot Yang Dipakai</option>
+                        @foreach($plotList as $plotItem)
+                            <option value="{{ $plotItem->plot }}">{{ $plotItem->plot }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 
             </div>
         </div>
@@ -101,27 +100,45 @@
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    new TomSelect("#nama_karyawan", {
+    // Inisialisasi TomSelect untuk nama karyawan dengan callback onInitialize
+    const tomSelectKaryawan = new TomSelect("#nama_karyawan", {
         create: false,
-        sortField: {field: "text", direction: "asc"}
+        sortField: {field: "text", direction: "asc"},
+        onInitialize: function(){
+            // Set reference ke instance TomSelect untuk digunakan di event handler
+            const self = this;
+            this.wrapper.addEventListener('change', function() {
+                // Ambil divisi dari opsi yang dipilih
+                const selectedItem = self.options[self.items[0]];
+                if (selectedItem) {
+                    const divisi = selectedItem.dataset.divisi || '';
+                    document.getElementById('divisi').value = divisi;
+                }
+            });
+        }
     });
-
+    
+    // Inisialisasi TomSelect untuk plot
     new TomSelect("#plot", {
         create: false,
         sortField: {field: "text", direction: "asc"}
     });
-
+    
+    // Fallback untuk browser yang mungkin tidak kompatibel dengan TomSelect
     const selectKaryawan = document.getElementById('nama_karyawan');
-    const inputDivisi   = document.getElementById('divisi');
-
-    selectKaryawan.addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        const divisi = selectedOption.getAttribute('data-divisi') || '';
-        inputDivisi.value = divisi;
-    });
+    const inputDivisi = document.getElementById('divisi');
     
-
-    
+    if (selectKaryawan && inputDivisi) {
+        selectKaryawan.addEventListener('change', function() {
+            if (this.selectedIndex > -1) {
+                const selectedOption = this.options[this.selectedIndex];
+                if (selectedOption) {
+                    const divisi = selectedOption.getAttribute('data-divisi') || '';
+                    inputDivisi.value = divisi;
+                }
+            }
+        });
+    }
 });
 </script>
 @endsection

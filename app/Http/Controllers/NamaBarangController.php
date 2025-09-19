@@ -27,8 +27,11 @@ class NamaBarangController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_barang'      => 'required|string',
+            'nama_barang' => 'required|string',
         ]);
+
+        // ubah ke uppercase
+        $validated['nama_barang'] = strtoupper($validated['nama_barang']);
 
         NamaBarang::create($validated);
 
@@ -40,6 +43,8 @@ class NamaBarangController extends Controller
         $validated = $request->validate([
             'nama_barang' => 'required|string',
         ]);
+
+        $validated['nama_barang'] = strtoupper($validated['nama_barang']);
 
         $barang->update($validated);
 

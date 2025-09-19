@@ -154,7 +154,7 @@
                                     <div class="grid gap-4">
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-2">Nama Barang</label>
-                                            <input type="text" name="nama_barang" value="{{ $barang->nama_barang }}" class="w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                                            <input type="text" name="nama_barang" value="{{ $barang->nama_barang }}" class="w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 uppercase" required>
                                         </div>
                                     </div>
                                     <div class="px-6">
@@ -204,7 +204,7 @@
                     <div class="grid gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Nama Barang</label>
-                            <input type="text" name="nama_barang" value="{{ old('nama_barang') }}" class="w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Masukkan nama" required>
+                            <input type="text" name="nama_barang" value="{{ old('nama_barang') }}" class="w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 uppercase" placeholder="Masukkan nama" required>
                         </div>
                 </form>
             </div>

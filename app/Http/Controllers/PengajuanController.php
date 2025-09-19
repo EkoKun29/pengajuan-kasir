@@ -51,15 +51,11 @@ class PengajuanController extends Controller
         // Ambil daftar plot untuk dropdown
         $plotList = AkunBiaya::all();
         
-        // Ambil semua data AkunBiaya untuk digunakan dalam JavaScript
-        $akunBiayaList = AkunBiaya::select('plot', 'keperluan_beban')->whereNotNull('plot')->whereNotNull('keperluan_beban')
-            ->where('plot', '!=', '')->where('keperluan_beban', '!=', '')->get();
-        
         // Generate contoh nomor surat untuk ditampilkan sebagai placeholder
         $today = Carbon::now()->format('dmy');
         $contohNomorSurat = "{$today}-RPTAG ALS-DIVISI 001";
         
-        return view('keuangan.pengajuan.create', compact('namaBarangs', 'namaKaryawans', 'plotList', 'akunBiayaList', 'contohNomorSurat'));
+        return view('keuangan.pengajuan.create', compact('namaBarangs', 'namaKaryawans', 'plotList', 'contohNomorSurat'));
     }
 
     /**
@@ -106,15 +102,15 @@ class PengajuanController extends Controller
     }
 
     /**
-     * Generate nomor surat otomatis dengan format P/YYYYMMDD/XXXX
+     * Generate nomor surat otomatis dengan format tanggal-RPTAG ALS-divisi-id
      */
-    private function generateNoSurat()
+    private function generateNoSurat($divisi, $idPengajuan)
     {
         $today = Carbon::now()->format('dmy'); // Format tanggal menjadi ddmmYY
         $prefix = "RPTAG ALS"; // Prefix tetap
 
         // Gabungkan format nomor surat
-        return sprintf('%s-%s %s-%s', $today, $prefix, $divisi, $idPengajuan);
+        return sprintf('%s-%s-%s-%s', $today, $prefix, $divisi, $idPengajuan);
     }
 
 
@@ -135,11 +131,7 @@ class PengajuanController extends Controller
         // Ambil daftar plot untuk dropdown
         $plotList = AkunBiaya::select('plot')->distinct()->whereNotNull('plot')->where('plot', '!=', '')->get();
         
-        // Ambil semua data AkunBiaya untuk digunakan dalam JavaScript
-        $akunBiayaList = AkunBiaya::select('plot', 'keperluan_beban')->whereNotNull('plot')->whereNotNull('keperluan_beban')
-            ->where('plot', '!=', '')->where('keperluan_beban', '!=', '')->get();
-        
-        return view('keuangan.pengajuan.edit', compact('pengajuan', 'namaBarangs', 'namaKaryawans', 'plotList', 'akunBiayaList'));
+        return view('keuangan.pengajuan.edit', compact('pengajuan', 'namaBarangs', 'namaKaryawans', 'plotList'));
     }
 
     /**
@@ -216,8 +208,7 @@ class PengajuanController extends Controller
                     'harga' => $item['harga'],
                     'berpajak' => $item['berpajak'] ?? 'Tidak',
                     'keterangan_pajak' => $item['keterangan_pajak'] ?? null,
-                    'keperluan_beban' => $item['keperluan_beban'] ?? null,
-                    'status_persetujuan' => 'pending', // Default status
+                    'status_persetujuan' => 'menunggu', // Default status
                 ]);
             }
             
@@ -255,7 +246,6 @@ class PengajuanController extends Controller
             'qty' => 'required|numeric|min:1',
             'harga' => 'required|numeric|min:0',
             'berpajak' => 'nullable|in:Ya,Tidak',
-            'keperluan_beban' => 'nullable|string|max:255',
             'keterangan_pajak' => 'nullable|string|max:255',
         ]);
         
@@ -266,7 +256,6 @@ class PengajuanController extends Controller
                 'qty' => $validated['qty'],
                 'harga' => $validated['harga'],
                 'berpajak' => $validated['berpajak'] ?? 'Tidak',
-                'keperluan_beban' => $validated['keperluan_beban'],
                 'keterangan_pajak' => $validated['keterangan_pajak'],
             ]);
             

@@ -66,10 +66,7 @@
                         <p class="text-sm font-medium text-gray-500">Plot</p>
                         <p class="text-gray-900">{{ $pengajuan->plot ?: '-' }}</p>
                     </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-500">Keperluan/Beban</p>
-                        <p class="text-gray-900">{{ $pengajuan->keperluan_beban ?: '-' }}</p>
-                    </div>
+
                     <div>
                         <p class="text-sm font-medium text-gray-500">Status</p>
                         <p class="text-gray-900">{{ $pengajuan->status ?: '-' }}</p>

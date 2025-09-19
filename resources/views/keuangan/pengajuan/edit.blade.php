@@ -68,18 +68,7 @@
                     </select>
                 </div>
                 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Keperluan/Beban</label>
-                    <input 
-                        type="text" 
-                        name="keperluan_beban" 
-                        id="keperluan_beban" 
-                        value="{{ old('keperluan_beban', $pengajuan->keperluan_beban) }}"
-                        class="w-full border-gray-300 rounded-lg px-3 py-2 bg-gray-50 focus:ring-0 focus:border-gray-300" 
-                        placeholder="Keperluan/Beban akan terisi otomatis" 
-                        readonly required
-                    >
-                </div>
+                {{-- Keperluan/Beban field removed --}}
             </div>
         </div>
 
@@ -115,40 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Data akun biaya untuk keperluan beban
-    const akunBiayaList = @json($akunBiayaList);
-    
-    // Auto-fill keperluan_beban when plot is selected
-    document.getElementById('plot').addEventListener('change', function() {
-        const selectedPlot = this.value;
-        const keperluanBebanField = document.getElementById('keperluan_beban');
-        
-        // Reset field to original value if nothing is found
-        const originalValue = '{{ $pengajuan->keperluan_beban }}';
-        
-        // Find the first matching keperluan_beban for the selected plot
-        const matchingItem = akunBiayaList.find(item => 
-            item.plot === selectedPlot && item.keperluan_beban && item.keperluan_beban.trim() !== ''
-        );
-        
-        // Set the keperluan_beban value if found
-        if (matchingItem) {
-            keperluanBebanField.value = matchingItem.keperluan_beban;
-        } else if (selectedPlot === '{{ $pengajuan->plot }}') {
-            // If the current plot is selected but no match found, keep original value
-            keperluanBebanField.value = originalValue;
-        } else {
-            keperluanBebanField.value = 'Tidak ada data keperluan/beban untuk plot ini';
-        }
-    });
-    
-    // Trigger plot change event on page load to auto-fill keperluan_beban with the current plot's value
-    const plotSelect = document.getElementById('plot');
-    if (plotSelect.value) {
-        // Create and dispatch a change event
-        const event = new Event('change');
-        plotSelect.dispatchEvent(event);
-    }
+    // JavaScript code for keperluan_beban has been removed since the field is no longer used
 });
 </script>
 @endsection

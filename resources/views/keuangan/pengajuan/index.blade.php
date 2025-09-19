@@ -46,7 +46,8 @@
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nama Karyawan</th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Divisi</th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Total Item</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Total</th>
+                        {{-- <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th> --}}
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
@@ -59,6 +60,9 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $pengajuan->nama_karyawan }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $pengajuan->divisi }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $pengajuan->total_item }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            Rp {{ number_format($pengajuan->total, 0, ',', '.') }}
+                        {{-- </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             @if($pengajuan->status == 'approved')
                                 <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Disetujui</span>
@@ -69,7 +73,7 @@
                             @else
                                 <span class="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">Menunggu</span>
                             @endif
-                        </td>
+                        </td> --}}
                         <td class="px-6 py-4 whitespace-nowrap text-sm space-x-2">
                             {{-- Detail Button --}}
                             <a href="{{ route('keuangan.pengajuans.show', $pengajuan) }}" title="Detail"

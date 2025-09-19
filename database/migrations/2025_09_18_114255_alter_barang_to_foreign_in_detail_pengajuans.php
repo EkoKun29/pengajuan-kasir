@@ -32,10 +32,13 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('detail_pengajuans', function (Blueprint $table) {
-            
+            // Hapus foreign key constraint dulu
             $table->dropForeign(['nama_barang_id']);
+            
+            // Kemudian hapus kolom
             $table->dropColumn('nama_barang_id');
             
+            // Kembalikan kolom asli
             $table->string('barang')->nullable()->after('id_pengajuan');
         });
     }
