@@ -19,6 +19,13 @@
                     </svg>
                     Edit Pengajuan
                 </a>
+                <button onclick="printInvoice('{{ route('keuangan.pengajuans.invoice', $pengajuan) }}')" title="Print Invoice"
+                    class="bg-green-500 text-white px-4 py-2.5 rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2 text-sm font-medium">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9V2h12v7M6 18h12v4H6v-4zM6 14h12v4H6v-4zM6 10h12v4H6v-4z" />
+                    </svg>
+                    Print Invoice
+                </button>
                 <a href="{{ route('keuangan.pengajuans.index') }}" class="bg-white border border-gray-200 text-gray-600 px-4 py-2.5 rounded-lg hover:bg-gray-50 hover:text-gray-700 transition-colors flex items-center gap-2 text-sm font-medium">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
@@ -119,4 +126,15 @@
         </div>
     </div>
 </div>
+
+<script>
+function printInvoice(url) {
+    let printWindow = window.open(url, 'PrintInvoice', 'width=1000,height=800');
+    printWindow.onload = function() {
+        setTimeout(function() {
+            printWindow.print();
+        }, 1000);
+    };
+}
+</script>
 @endsection

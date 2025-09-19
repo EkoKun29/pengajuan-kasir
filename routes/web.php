@@ -78,6 +78,7 @@ Route::middleware(['auth', 'role:keuangan', 'log.sensitive'])
             Route::put('detail/{detail}', [App\Http\Controllers\PengajuanController::class, 'updateDetail'])->name('pengajuans.detail.update');
             Route::delete('detail/{detail}', [App\Http\Controllers\PengajuanController::class, 'destroyDetail'])->name('pengajuans.detail.destroy');
             Route::patch('detail/{detail}/status', [App\Http\Controllers\PengajuanController::class, 'setStatus'])->name('pengajuans.detail.status');
+            Route::get('invoice', [App\Http\Controllers\PengajuanController::class, 'printInvoice'])->name('pengajuans.invoice');
         });
     });
 

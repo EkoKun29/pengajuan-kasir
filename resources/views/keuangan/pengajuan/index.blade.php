@@ -87,13 +87,13 @@
                                 </svg>
                             </a>
                             {{-- Print Button --}}
-                            <a href="#" title="Print Nota/Invoice" target="_blank"
+                            <button onclick="printInvoice('{{ route('keuangan.pengajuans.invoice', $pengajuan) }}')" title="Print Nota/Invoice"
                                 class="inline-flex items-center p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M6 9V2h12v7M6 18h12v4H6v-4zM6 14h12v4H6v-4zM6 10h12v4H6v-4z" />
                                 </svg>
-                            </a>
+                            </button>
                             {{-- Delete Button --}}
                             <form action="{{ route('keuangan.pengajuans.destroy', $pengajuan) }}" method="POST" class="inline delete-form">
                                 @csrf @method('DELETE')
@@ -134,6 +134,25 @@ function confirmDelete(form, name) {
     if (confirm(`Apakah Anda yakin ingin menghapus pengajuan ${name}?`)) {
         form.submit();
     }
+}
+
+function printInvoice(url) {
+    // Buka popup window kecil
+    let printWindow = window.open(url, 'PrintInvoice', 'width=1000,height=800');
+    
+    // Tunggu sampai konten selesai dimuat
+    printWindow.onload = function() {
+        // Berikan sedikit waktu agar CSS dan gambar dimuat dengan sempurna
+        setTimeout(function() {
+            // Tampilkan print dialog
+            printWindow.print();
+            
+            // Tutup jendela setelah print dialog ditutup (opsional)
+            // printWindow.onafterprint = function() {
+            //     printWindow.close();
+            // };
+        }, 1000);
+    };
 }
 </script>
 @endsection

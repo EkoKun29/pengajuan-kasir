@@ -47,7 +47,7 @@
                         <option value="" disabled>Pilih Karyawan</option>
                         @foreach($namaKaryawans as $karyawan)
                             <option value="{{ $karyawan->nama_karyawan }}" data-divisi="{{ $karyawan->divisi }}" data-jabatan="{{ $karyawan->jabatan }}" {{ old('nama_karyawan', $pengajuan->nama_karyawan) == $karyawan->nama_karyawan ? 'selected' : '' }}>
-                                {{ $karyawan->nama_karyawan }} - {{ $karyawan->divisi }}
+                                {{ $karyawan->nama_karyawan }}
                             </option>
                         @endforeach
                     </select>
@@ -58,10 +58,10 @@
                     <input type="text" name="divisi" id="divisi" value="{{ old('divisi', $pengajuan->divisi) }}" class="w-full border-gray-300 rounded-lg px-3 py-2 bg-gray-50 focus:ring-0 focus:border-gray-300" readonly>
                 </div>
                 
-                <div>
+                {{-- <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Jabatan</label>
                     <input type="text" name="jabatan" id="jabatan" value="{{ old('jabatan', $pengajuan->jabatan) }}" class="w-full border-gray-300 rounded-lg px-3 py-2 bg-gray-50 focus:ring-0 focus:border-gray-300" readonly>
-                </div>
+                </div> --}}
                 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Plot</label>

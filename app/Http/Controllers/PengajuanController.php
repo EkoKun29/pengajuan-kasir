@@ -56,7 +56,8 @@ class PengajuanController extends Controller
             ->where('plot', '!=', '')->where('keperluan_beban', '!=', '')->get();
         
         // Generate contoh nomor surat untuk ditampilkan sebagai placeholder
-        $contohNomorSurat = $this->generateNoSurat();
+        $today = Carbon::now()->format('dmy');
+        $contohNomorSurat = "{$today}-RPTAG ALS-DIVISI 001";
         
         return view('keuangan.pengajuan.create', compact('namaBarangs', 'namaKaryawans', 'plotList', 'akunBiayaList', 'contohNomorSurat'));
     }
@@ -75,21 +76,25 @@ class PengajuanController extends Controller
             'keperluan_beban' => 'required|string|max:255',
         ]);
 
-        // Generate nomor surat
-        $noSurat = $this->generateNoSurat();
-
         // Buat pengajuan baru dengan transaksi DB untuk memastikan konsistensi data
         DB::beginTransaction();
         try {
-            // Simpan data pengajuan
+            // Simpan data pengajuan dengan nomor surat temporary terlebih dahulu
             $pengajuan = Pengajuan::create([
                 'tgl_pengajuan' => $validated['tgl_pengajuan'],
-                'no_surat' => $noSurat,
+                'no_surat' => 'TEMP-' . time(), // Nomor sementara
                 'nama_karyawan' => $validated['nama_karyawan'],
                 'divisi' => $validated['divisi'],
                 'plot' => $validated['plot'],
                 'keperluan_beban' => $validated['keperluan_beban'],
             ]);
+            
+            // Generate nomor surat final dengan ID pengajuan yang sudah dibuat
+            $noSurat = $this->generateNoSurat($validated['divisi'], $pengajuan->id);
+            
+            // Update nomor surat dengan format yang benar
+            $pengajuan->no_surat = $noSurat;
+            $pengajuan->save();
 
             DB::commit();
             
@@ -103,28 +108,15 @@ class PengajuanController extends Controller
     }
 
     /**
-     * Generate nomor surat otomatis dengan format P/YYYYMMDD/XXXX
+     * Generate nomor surat otomatis dengan format ddmmYY-RPTAG ALS-divisi dari karyawan (spasi) ID pengajuan
      */
-    private function generateNoSurat()
+    private function generateNoSurat($divisi, $idPengajuan)
     {
-        $today = Carbon::now()->format('Ymd');
-        $prefix = "P/{$today}/";
-        
-        // Dapatkan nomor surat terakhir dengan prefix yang sama
-        $lastPengajuan = Pengajuan::where('no_surat', 'like', "{$prefix}%")
-                                  ->orderBy('id', 'desc')
-                                  ->first();
-        
-        if ($lastPengajuan) {
-            // Ekstrak angka dari nomor surat terakhir
-            $lastNumber = (int) substr($lastPengajuan->no_surat, strlen($prefix));
-            $newNumber = $lastNumber + 1;
-        } else {
-            $newNumber = 1;
-        }
-        
-        // Format nomor dengan 4 digit (misalnya 0001, 0012, dll)
-        return $prefix . sprintf('%04d', $newNumber);
+        $today = Carbon::now()->format('dmy'); // Format tanggal menjadi ddmmYY
+        $prefix = "RPTAG ALS"; // Prefix tetap
+
+        // Gabungkan format nomor surat
+        return sprintf('%s-%s %s-%s', $today, $prefix, $divisi, $idPengajuan);
     }
 
     /**
@@ -342,5 +334,22 @@ class PengajuanController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Generate and display invoice for printing.
+     */
+    public function printInvoice(Pengajuan $pengajuan)
+    {
+        // Load pengajuan with its details and related items
+        $pengajuan->load(['detailPengajuans.namaBarang']);
+        
+        // Count total amount
+        $totalAmount = $pengajuan->detailPengajuans->sum('total');
+        
+        // Generate invoice date
+        $invoiceDate = Carbon::now()->format('d-m-Y');
+        
+        return view('keuangan.pengajuan.invoice', compact('pengajuan', 'totalAmount', 'invoiceDate'));
     }
 }
