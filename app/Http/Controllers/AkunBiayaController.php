@@ -11,7 +11,16 @@ class AkunBiayaController extends Controller
     public function index()
     {
         $akunPlot = AkunBiaya::all();
-        return view('keuangan.database.db_plot.index', compact('akunPlot'));
+
+        // Check user role and return the appropriate view
+        if (auth()->user()->role === 'admin') {
+            return view('admin.database.db_plot.index', compact('akunPlot'));
+        } else if (auth()->user()->role === 'keuangan') {
+            return view('keuangan.database.db_plot.index', compact('akunPlot'));
+        }
+
+        // Default fallback (optional)
+        abort(403, 'Unauthorized action.');
     }
 
     public function sync(){

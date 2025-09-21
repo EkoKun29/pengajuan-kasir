@@ -9,7 +9,7 @@ class NamaBarangController extends Controller
 {
      public function index(Request $request)
     {
-        //search and pagination
+        // Pencarian dan paginasi
         $keyword = $request->query('search');
 
         $barangs = NamaBarang::query()
@@ -20,8 +20,16 @@ class NamaBarangController extends Controller
             })
             ->paginate(10)
             ->appends(['search' => $keyword]);
-            
-        return view('keuangan.barang.index', compact('barangs', 'keyword'));
+
+        // Cek peran pengguna dan kembalikan view yang sesuai
+        if (auth()->user()->role === 'admin') {
+            return view('admin.barang.index', compact('barangs', 'keyword'));
+        } else if (auth()->user()->role === 'direktur') {
+            return view('direktur.barang.index', compact('barangs', 'keyword'));
+        }
+
+        // Fallback default (opsional)
+        abort(403, 'Akses tidak diizinkan.');
     }
 
     public function store(Request $request)

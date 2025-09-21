@@ -11,7 +11,16 @@ class NamaKaryawanController extends Controller
     public function index()
     {
         $karyawan = NamaKaryawan::all();
-        return view('keuangan.database.db_karyawan.index', compact('karyawan'));
+
+        // Check user role and return the appropriate view
+        if (auth()->user()->role === 'admin') {
+            return view('admin.database.db_karyawan.index', compact('karyawan'));
+        } else if (auth()->user()->role === 'keuangan') {
+            return view('keuangan.database.db_karyawan.index', compact('karyawan'));
+        }
+
+        // Default fallback (optional)
+        abort(403, 'Unauthorized action.');
     }
 
     public function sync(){

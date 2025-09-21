@@ -44,7 +44,7 @@
         
         {{-- Filter Form --}}
         <div id="filterForm" class="hidden mt-6 p-4 bg-gray-50 rounded-lg">
-            <form method="GET" action="{{ route('direktur.audit.index') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <form method="GET" action="{{ route('admin.audit.index') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {{-- Date Range --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Dari Tanggal</label>
@@ -97,7 +97,7 @@
                     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
                         Apply Filter
                     </button>
-                    <a href="{{ route('direktur.audit.index') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium">
+                    <a href="{{ route('admin.audit.index') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium">
                         Reset
                     </a>
                 </div>
@@ -165,7 +165,7 @@
                         </td>
                         
                         <td class="px-6 py-4 whitespace-nowrap text-sm">
-                            <a href="{{ route('direktur.audit.show', $log) }}" 
+                            <a href="{{ route('admin.audit.show', $log) }}" 
                                class="text-blue-600 hover:text-blue-900 font-medium">
                                 View Details
                             </a>
@@ -231,7 +231,7 @@ function exportData() {
     // Buat form untuk POST request
     const exportForm = document.createElement('form');
     exportForm.method = 'POST';
-    exportForm.action = '{{ route('direktur.audit.export') }}';
+    exportForm.action = '{{ route('admin.audit.export') }}';
     exportForm.style.display = 'none';
     
     // Tambahkan CSRF token

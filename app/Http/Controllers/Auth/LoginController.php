@@ -39,6 +39,7 @@ class LoginController extends Controller
             return redirect()->intended(match ($role) {
                 'direktur'    => route('direktur.dashboard'),
                 'keuangan' => route('keuangan.dashboard'),
+                'admin' => route('admin.dashboard'),
             });
         }
 

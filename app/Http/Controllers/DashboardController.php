@@ -67,6 +67,30 @@ class DashboardController extends Controller
         return view('direktur.dashboard', $data);
     }
     
+    public function adminDashboard()
+    {
+        $user = auth()->user();
+
+        // Data untuk admin dashboard
+        $data = [
+            'user' => $user,
+            'totalUsers' => User::count(),
+            'totalAdmins' => User::where('role', 'admin')->count(),
+            'totalKeuangan' => User::where('role', 'keuangan')->count(),
+            'totalDirektur' => User::where('role', 'direktur')->count(),
+            'todayLogins' => AuditLog::where('action', 'Login')
+                ->whereDate('created_at', today())
+                ->count(),
+            'recentActivity' => AuditLog::where('user_id', $user->id)
+                ->latest()
+                ->take(10)
+                ->get(),
+            'recentUsers' => User::latest()->take(5)->get(),
+        ];
+
+        return view('admin.dashboard', $data);
+    }
+    
     private function getUserGrowthData()
     {
         $months = [];

@@ -36,6 +36,28 @@ Route::middleware(['auth', 'log.sensitive'])->group(function () {
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
 
+//auth admin
+Route::middleware(['auth', 'role:admin', 'log.sensitive'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'adminDashboard'])->name('dashboard');
+        Route::resource('users', UserController::class);
+        // Audit Log routes
+        Route::get('/audit', [AuditLogController::class, 'index'])->name('audit.index');
+        Route::get('/audit/{auditLog}', [AuditLogController::class, 'show'])->name('audit.show');
+        Route::post('/audit/export', [AuditLogController::class, 'export'])->name('audit.export');
+        //barang
+        Route::resource('barangs', NamaBarangController::class);
+        
+        //-------------------------------- DATABASE -------------------------------//
+        Route::resource('barangs', NamaBarangController::class);
+        Route::get('/database/karyawan', [NamaKaryawanController::class, 'index'])->name('database.karyawan');
+        Route::get('/database/karyawan/sync', [NamaKaryawanController::class, 'sync'])->name('database.karyawan.sync');
+        Route::get('/database/plot', [AkunBiayaController::class, 'index'])->name('database.plot');
+        Route::get('/database/plot/sync', [AkunBiayaController::class, 'sync'])->name('database.plot.sync');
+    });
+
 // auth direktur
 Route::middleware(['auth', 'role:direktur', 'log.sensitive'])
     ->prefix('direktur')
@@ -43,10 +65,6 @@ Route::middleware(['auth', 'role:direktur', 'log.sensitive'])
     ->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'direkturDashboard'])->name('dashboard');
         Route::resource('users', UserController::class);
-        // Audit Log routes
-        Route::get('/audit', [AuditLogController::class, 'index'])->name('audit.index');
-        Route::get('/audit/{auditLog}', [AuditLogController::class, 'show'])->name('audit.show');
-        Route::post('/audit/export', [AuditLogController::class, 'export'])->name('audit.export');
         // Tambahkan resource lain untuk direktur jika diperlukan
     });
 
@@ -57,13 +75,6 @@ Route::middleware(['auth', 'role:keuangan', 'log.sensitive'])
     ->group(function () {
         //-------------------------------- DASHBOARD -------------------------------//
         Route::get('/dashboard', [DashboardController::class, 'keuanganDashboard'])->name('dashboard');
-
-        //-------------------------------- DATABASE -------------------------------//
-        Route::resource('barangs', NamaBarangController::class);
-        Route::get('/database/karyawan', [NamaKaryawanController::class, 'index'])->name('database.karyawan');
-        Route::get('/database/karyawan/sync', [NamaKaryawanController::class, 'sync'])->name('database.karyawan.sync');
-        Route::get('/database/plot', [AkunBiayaController::class, 'index'])->name('database.plot');
-        Route::get('/database/plot/sync', [AkunBiayaController::class, 'sync'])->name('database.plot.sync');
         
         //-------------------------------- PENGAJUAN -------------------------------//
         // Resource dasar untuk pengajuan

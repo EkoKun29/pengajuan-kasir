@@ -49,13 +49,13 @@ class AuditLogController extends Controller
         $actions = AuditLog::distinct()->pluck('action')->filter();
         $users = \App\Models\User::select('id', 'name', 'email')->get();
         
-        return view('direktur.audit.index', compact('logs', 'actions', 'users'));
+        return view('admin.audit.index', compact('logs', 'actions', 'users'));
     }
     
     public function show(AuditLog $auditLog)
     {
         $auditLog->load('user');
-        return view('direktur.audit.show', compact('auditLog'));
+        return view('admin.audit.show', compact('auditLog'));
     }
     
     public function export(Request $request)

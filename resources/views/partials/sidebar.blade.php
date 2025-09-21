@@ -33,7 +33,7 @@
         <ul class="space-y-2">
             <!-- Dashboard - Menu untuk semua role -->
             <li>
-                <a href="{{ auth()->user()->role === 'direktur' ? route('direktur.dashboard') : route('keuangan.dashboard') }}" 
+                <a href="{{ auth()->user()->role === 'admin' ? route('admin.dashboard') : (auth()->user()->role === 'direktur' ? route('direktur.dashboard') : route('keuangan.dashboard')) }}" 
                    class="flex items-center px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">
                     <i class="fas fa-home w-5 h-5 mr-3 text-gray-500 group-hover:text-blue-500"></i>
                     <span class="sidebar-text">Dashboard</span>
@@ -42,37 +42,6 @@
             
             <!-- Menu khusus Direktur -->
             @if(auth()->user()->role === 'direktur')
-                <!-- Dropdown Menu Management -->
-                <li class="relative">
-                    <button onclick="toggleDropdown()" class="flex items-center justify-between w-full px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">
-                        <div class="flex items-center">
-                            <i class="fas fa-users-cog w-5 h-5 mr-3 text-gray-500 group-hover:text-blue-500"></i>
-                            <span class="sidebar-text">Management</span>
-                        </div>
-                        <i class="fas fa-chevron-down text-xs text-gray-400 group-hover:text-blue-500 transition-all duration-200 sidebar-arrow" id="dropdown-arrow"></i>
-                    </button>
-                    
-                    <!-- Dropdown Content -->
-                    <div id="dropdown-content" class="hidden mt-1 ml-8 space-y-1 dropdown-content">
-                        <a href="{{ route('direktur.users.index') }}" class="flex items-center px-3 py-2 text-sm text-gray-600 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-all duration-200">
-                            <i class="fas fa-users w-4 h-4 mr-3"></i>
-                            <span class="sidebar-text">Users</span>
-                        </a>
-                        <a href="#" class="flex items-center px-3 py-2 text-sm text-gray-600 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-all duration-200">
-                            <i class="fas fa-user-shield w-4 h-4 mr-3"></i>
-                            <span class="sidebar-text">Roles</span>
-                        </a>
-                        <a href="#" class="flex items-center px-3 py-2 text-sm text-gray-600 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-all duration-200">
-                            <i class="fas fa-key w-4 h-4 mr-3"></i>
-                            <span class="sidebar-text">Permissions</span>
-                        </a>
-                        <a href="{{ route('direktur.audit.index') }}" class="flex items-center px-3 py-2 text-sm text-gray-600 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-all duration-200">
-                            <i class="fas fa-clipboard-check w-4 h-4 mr-3"></i>
-                            <span class="sidebar-text">Audit Log</span>
-                        </a>
-                    </div>
-                </li>
-                
                 <li>
                     <a href="#" class="flex items-center px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">
                         <i class="fas fa-chart-line w-5 h-5 mr-3 text-gray-500 group-hover:text-blue-500"></i>
@@ -87,30 +56,83 @@
                     </a>
                 </li>
             @endif
+
+            @if(auth()->user()->role === 'admin')
+            <!-- Dropdown Menu Management -->
+            <li class="relative">
+                <button onclick="toggleDropdown()" class="flex items-center justify-between w-full px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">
+                    <div class="flex items-center">
+                        <i class="fas fa-tasks w-5 h-5 mr-3 text-gray-500 group-hover:text-blue-500"></i>
+                        <span class="sidebar-text">Management</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-xs text-gray-400 group-hover:text-blue-500 transition-all duration-200 sidebar-arrow" id="dropdown-arrow"></i>
+                </button>
+                
+                <!-- Dropdown Content -->
+                <div id="dropdown-content" class="hidden mt-1 ml-8 space-y-1 dropdown-content">
+                    <a href="{{ route('admin.users.index') }}" class="flex items-center px-3 py-2 text-sm text-gray-600 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-all duration-200">
+                        <i class="fas fa-user-cog w-4 h-4 mr-3"></i>
+                        <span class="sidebar-text">User</span>
+                    </a>
+                    <a href="{{ route('admin.audit.index') }}" class="flex items-center px-3 py-2 text-sm text-gray-600 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-all duration-200">
+                        <i class="fas fa-history w-4 h-4 mr-3"></i>
+                        <span class="sidebar-text">Audit Log</span>
+                    </a>
+                </div>
+            </li>
+
+            <li x-data="{ open: false }" class="relative">
+                <button @click="open = !open" class="flex items-center w-full px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">
+                    <i class="fas fa-database w-5 h-5 mr-3 text-gray-500 group-hover:text-blue-500"></i>
+                    <span class="sidebar-text">Database</span>
+                    <i class="fas fa-chevron-down ml-auto text-gray-400 group-hover:text-blue-500 transition-transform"
+                    :class="{ 'rotate-180': open }"></i>
+                </button>
+
+                <!-- Dropdown Menu -->
+                <ul x-show="open" x-transition
+                    class="mt-1 ml-8 space-y-1 text-sm text-gray-600">
+                    <li>
+                        <a href="{{ route('admin.database.karyawan') }}" 
+                        class="flex items-center px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 transition-all">
+                            <i class="fas fa-user-tie w-4 h-4 mr-3"></i>
+                            Nama Karyawan
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.database.plot') }}" 
+                        class="flex items-center px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 transition-all">
+                            <i class="fas fa-map-marked-alt w-4 h-4 mr-3"></i>
+                            Plot
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.barangs.index') }}" 
+                        class="flex items-center px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 transition-all">
+                            <i class="fas fa-box w-4 h-4 mr-3"></i>
+                            Nama Barang
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            
+            <li>
+                <a href="#" class="flex items-center px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">
+                    <i class="fas fa-sliders-h w-5 h-5 mr-3 text-gray-500 group-hover:text-blue-500"></i>
+                    <span class="sidebar-text">Settings</span>
+                </a>
+            </li>
+        @endif
             
             <!-- Menu khusus Keuangan -->
             @if(auth()->user()->role === 'keuangan')
-                {{-- <li>
-                    <a href="{{ route('profile.edit') }}" class="flex items-center px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">
-                        <i class="fas fa-user-edit w-5 h-5 mr-3 text-gray-500 group-hover:text-blue-500"></i>
-                        <span class="sidebar-text">Profil Saya</span>
-                    </a>
-                </li> --}}
-                
-                {{-- <li>
-                    <a href="{{ route('keuangan.users.index') }}" class="flex items-center px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">
-                        <i class="fas fa-users w-5 h-5 mr-3 text-gray-500 group-hover:text-blue-500"></i>
-                        <span class="sidebar-text">Lihat Keuangan</span>
-                    </a>
-                </li> --}}
-                
                 <li>
                     <a href="{{ route('keuangan.pengajuans.index') }}" class="flex items-center px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">
                         <i class="fas fa-bell w-5 h-5 mr-3 text-gray-500 group-hover:text-blue-500"></i>
                         <span class="sidebar-text">Pengajuan</span>
                     </a>
                 </li>
-                <li x-data="{ open: false }" class="relative">
+                {{-- <li x-data="{ open: false }" class="relative">
                     <button @click="open = !open" class="flex items-center w-full px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">
                         <i class="fas fa-users w-5 h-5 mr-3 text-gray-500 group-hover:text-blue-500"></i>
                         <span class="sidebar-text">Database</span>
@@ -140,7 +162,7 @@
                             </a>
                         </li>
                     </ul>
-                </li>
+                </li> --}}
 
             @endif
             

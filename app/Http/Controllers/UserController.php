@@ -24,7 +24,7 @@ class UserController extends Controller
             ->paginate(5)
             ->appends(['search' => $keyword]);
             
-        return view('direktur.users.index', compact('users', 'keyword'));
+        return view('admin.users.index', compact('users', 'keyword'));
     }
 
     public function store(Request $request)
@@ -32,14 +32,16 @@ class UserController extends Controller
         $validated = $request->validate([
             'name'      => 'required|string|max:100|regex:/^[a-zA-Z\s]+$/',
             'email'     => 'required|email|unique:users,email|max:255',
-            'role'      => 'required|in:admin,user',
+            'role'      => 'required|in:admin,direktur,keuangan',
             'password'  => 'required|min:8|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/',
+            'no_wa'     => 'nullable|string|unique:users,no_wa',
         ], [
             'name.regex' => 'Nama hanya boleh berisi huruf dan spasi.',
             'password.regex' => 'Password harus mengandung huruf besar, huruf kecil, angka, dan karakter khusus.',
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
+        $validated['no_wa'] = $validated['no_wa'] ?? '62';
 
         User::create($validated);
 
@@ -51,7 +53,8 @@ class UserController extends Controller
         $rules = [
             'name'      => 'required|string|max:100|regex:/^[a-zA-Z\s]+$/',
             'email'     => 'required|email|unique:users,email,' . $user->id . '|max:255',
-            'role'      => 'required|in:admin,user',
+            'role'      => 'required|in:admin,keuangan,direktur',
+            'no_wa'     => 'nullable|string|unique:users,no_wa,' . $user->id,
         ];
         
         // Validasi password hanya jika diisi
@@ -69,6 +72,8 @@ class UserController extends Controller
         } else {
             unset($validated['password']);
         }
+
+        $validated['no_wa'] = $validated['no_wa'] ?? '62';
 
         $user->update($validated);
 
