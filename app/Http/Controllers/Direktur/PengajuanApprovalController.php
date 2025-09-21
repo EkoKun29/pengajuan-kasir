@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Direktur;
 use App\Models\Pengajuan;
 use App\Models\DetailPengajuan;
 use App\Models\AuditLog;
+use App\Models\User;
+use App\Services\FonnteWhatsAppService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -78,6 +80,11 @@ class PengajuanApprovalController extends Controller
             'keterangan_revisi' => $validated['keterangan_revisi'] ?? null,
         ]);
         
+        // Kirim notifikasi WhatsApp jika statusnya approved atau rejected
+        if (in_array($validated['status_persetujuan'], ['approved', 'rejected'])) {
+            $this->sendWhatsAppNotificationToFinance($pengajuan, $detail, $validated['status_persetujuan'], $validated['keterangan_revisi'] ?? null);
+        }
+        
         // Logging
         $statusText = [
             'approved' => 'menyetujui',
@@ -145,9 +152,112 @@ class PengajuanApprovalController extends Controller
                 'performed_at' => now()
             ]);
             
+            // Kirim notifikasi WhatsApp untuk approve all
+            $this->sendWhatsAppNotificationForApproveAll($pengajuan);
+            
             return back()->with('success', 'Semua item berhasil disetujui');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menyetujui semua item: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Mengirim notifikasi WhatsApp ke bagian keuangan untuk item yang disetujui/ditolak
+     *
+     * @param Pengajuan $pengajuan
+     * @param DetailPengajuan $detail
+     * @param string $status
+     * @param string|null $note
+     * @return void
+     */
+    private function sendWhatsAppNotificationToFinance(Pengajuan $pengajuan, DetailPengajuan $detail, $status, $note = null)
+    {
+        try {
+            // Cari user keuangan berdasarkan pengajuan
+            // Karena tidak ada hubungan langsung antara pengajuan dan user
+            // Kita dapat mencari user dengan role keuangan
+            $financeUsers = User::where('role', 'keuangan')->get();
+            
+            if ($financeUsers->isEmpty()) {
+                \Log::warning('Tidak ada user keuangan untuk mengirim notifikasi WhatsApp');
+                return;
+            }
+            
+            $whatsappService = new FonnteWhatsAppService();
+            
+            // Kirim notifikasi ke setiap user keuangan
+            foreach ($financeUsers as $user) {
+                // Pastikan user memiliki nomor WA
+                if (empty($user->no_wa)) {
+                    \Log::warning("User keuangan {$user->name} tidak memiliki nomor WhatsApp");
+                    continue;
+                }
+                
+                // Tambahkan info tentang barang yang disetujui/ditolak
+                $itemNote = $note;
+                if ($itemNote === null || empty($itemNote)) {
+                    $itemNote = "Item: {$detail->nama_barang}";
+                } else {
+                    $itemNote = "Item: {$detail->nama_barang}. Catatan: {$note}";
+                }
+                
+                // Kirim notifikasi
+                $whatsappService->sendSubmissionStatusNotification(
+                    $user->no_wa,
+                    $pengajuan->no_surat,
+                    $status,
+                    $itemNote
+                );
+                
+                \Log::info("Notifikasi WhatsApp status item berhasil dikirim ke user keuangan {$user->name}");
+            }
+        } catch (\Exception $e) {
+            \Log::error('Gagal mengirim notifikasi WhatsApp: ' . $e->getMessage(), [
+                'pengajuan_id' => $pengajuan->id,
+                'detail_id' => $detail->id,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+    
+    /**
+     * Mengirim notifikasi WhatsApp ke bagian keuangan untuk approve all
+     *
+     * @param Pengajuan $pengajuan
+     * @return void
+     */
+    private function sendWhatsAppNotificationForApproveAll(Pengajuan $pengajuan)
+    {
+        try {
+            $financeUsers = User::where('role', 'keuangan')->get();
+            
+            if ($financeUsers->isEmpty()) {
+                \Log::warning('Tidak ada user keuangan untuk mengirim notifikasi WhatsApp');
+                return;
+            }
+            
+            $whatsappService = new FonnteWhatsAppService();
+            
+            foreach ($financeUsers as $user) {
+                if (empty($user->no_wa)) {
+                    \Log::warning("User keuangan {$user->name} tidak memiliki nomor WhatsApp");
+                    continue;
+                }
+                
+                $whatsappService->sendSubmissionStatusNotification(
+                    $user->no_wa,
+                    $pengajuan->no_surat,
+                    'approved',
+                    'Semua item telah disetujui oleh direktur'
+                );
+                
+                \Log::info("Notifikasi WhatsApp approve all berhasil dikirim ke user keuangan {$user->name}");
+            }
+        } catch (\Exception $e) {
+            \Log::error('Gagal mengirim notifikasi WhatsApp untuk approve all: ' . $e->getMessage(), [
+                'pengajuan_id' => $pengajuan->id,
+                'error' => $e->getMessage()
+            ]);
         }
     }
 }

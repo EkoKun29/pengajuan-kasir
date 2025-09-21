@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Pengajuan;
 use App\Models\DetailPengajuan;
 use App\Models\NamaBarang;
 use App\Models\NamaKaryawan;
 use App\Models\AkunBiaya;
+use App\Services\FonnteWhatsAppService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -217,6 +219,9 @@ class PengajuanController extends Controller
             $pengajuan->total = $totalAmount;
             $pengajuan->save();
             
+            // Kirim notifikasi WhatsApp ke direktur
+            $this->sendWhatsAppNotificationToDirector($pengajuan);
+            
             DB::commit();
             
             return redirect()->route('keuangan.pengajuans.show', $pengajuan->id)
@@ -336,5 +341,52 @@ class PengajuanController extends Controller
         $invoiceDate = Carbon::now()->format('d-m-Y');
         
         return view('keuangan.pengajuan.invoice', compact('pengajuan', 'totalAmount', 'invoiceDate'));
+    }
+    
+    /**
+     * Mengirim notifikasi WhatsApp ke direktur tentang pengajuan baru
+     *
+     * @param Pengajuan $pengajuan
+     * @return void
+     */
+    private function sendWhatsAppNotificationToDirector(Pengajuan $pengajuan)
+    {
+        try {
+            // Ambil semua user dengan role direktur
+            $directors = User::where('role', 'direktur')->get();
+            
+            // Jika tidak ada direktur, keluar dari fungsi
+            if ($directors->isEmpty()) {
+                \Log::warning('Tidak ada user dengan role direktur untuk mengirim notifikasi WhatsApp');
+                return;
+            }
+            
+            $whatsappService = new FonnteWhatsAppService();
+            
+            // Kirim notifikasi ke setiap direktur
+            foreach ($directors as $director) {
+                // Pastikan direktur memiliki nomor WA
+                if (empty($director->no_wa)) {
+                    \Log::warning("Direktur {$director->name} tidak memiliki nomor WhatsApp");
+                    continue;
+                }
+                
+                // Kirim notifikasi
+                $whatsappService->sendNewSubmissionNotification(
+                    $director->no_wa,
+                    $pengajuan->nama_karyawan,
+                    $pengajuan->no_surat,
+                    $pengajuan->divisi,
+                    $pengajuan->total
+                );
+                
+                \Log::info("Notifikasi WhatsApp berhasil dikirim ke direktur {$director->name}");
+            }
+        } catch (\Exception $e) {
+            \Log::error('Gagal mengirim notifikasi WhatsApp: ' . $e->getMessage(), [
+                'pengajuan_id' => $pengajuan->id,
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 }
