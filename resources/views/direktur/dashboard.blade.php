@@ -147,7 +147,7 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-200">
             <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-gray-900">Aktivitas Terbaru</h3>
-                <a href="{{ route('direktur.audit.index') }}" class="text-blue-600 hover:text-blue-700 text-sm font-medium">Lihat Semua</a>
+                <a href="#" class="text-blue-600 hover:text-blue-700 text-sm font-medium">Lihat Semua</a>
             </div>
             <div class="p-6">
                 <div class="space-y-4">

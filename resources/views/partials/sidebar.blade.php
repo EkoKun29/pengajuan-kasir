@@ -43,6 +43,12 @@
             <!-- Menu khusus Direktur -->
             @if(auth()->user()->role === 'direktur')
                 <li>
+                    <a href="{{ route('direktur.pengajuan.index') }}" class="flex items-center px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">
+                        <i class="fas fa-clipboard-check w-5 h-5 mr-3 text-gray-500 group-hover:text-blue-500"></i>
+                        <span class="sidebar-text">Persetujuan Pengajuan</span>
+                    </a>
+                </li>
+                {{-- <li>
                     <a href="#" class="flex items-center px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">
                         <i class="fas fa-chart-line w-5 h-5 mr-3 text-gray-500 group-hover:text-blue-500"></i>
                         <span class="sidebar-text">Reports</span>
@@ -54,9 +60,10 @@
                         <i class="fas fa-cog w-5 h-5 mr-3 text-gray-500 group-hover:text-blue-500"></i>
                         <span class="sidebar-text">Settings</span>
                     </a>
-                </li>
+                </li> --}}
             @endif
 
+            <!-- Menu khusus Admin -->
             @if(auth()->user()->role === 'admin')
             <!-- Dropdown Menu Management -->
             <li class="relative">
@@ -167,12 +174,12 @@
             @endif
             
             <!-- Menu untuk semua role -->
-            <li>
+            {{-- <li>
                 <a href="#" class="flex items-center px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">
                     <i class="fas fa-question-circle w-5 h-5 mr-3 text-gray-500 group-hover:text-blue-500"></i>
                     <span class="sidebar-text">Help</span>
                 </a>
-            </li>
+            </li> --}}
         </ul>
     </nav>
     

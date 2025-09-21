@@ -1,14 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AkunBiayaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\AkunBiayaController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\NamaBarangController;
 use App\Http\Controllers\NamaKaryawanController;
+use App\Http\Controllers\Direktur\PengajuanApprovalController;
 
 
 Route::middleware('guest')->group(function () {
@@ -65,7 +67,12 @@ Route::middleware(['auth', 'role:direktur', 'log.sensitive'])
     ->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'direkturDashboard'])->name('dashboard');
         Route::resource('users', UserController::class);
-        // Tambahkan resource lain untuk direktur jika diperlukan
+        
+        // Pengajuan Approval Routes
+        Route::get('pengajuan', [PengajuanApprovalController::class, 'index'])->name('pengajuan.index');
+        Route::get('pengajuan/{pengajuan}', [PengajuanApprovalController::class, 'show'])->name('pengajuan.show');
+        Route::patch('pengajuan/{pengajuan}/item/{detail}', [PengajuanApprovalController::class, 'updateStatus'])->name('pengajuan.update-status');
+        Route::patch('pengajuan/{pengajuan}/approve-all', [PengajuanApprovalController::class, 'approveAll'])->name('pengajuan.approve-all');
     });
 
 // auth keuangan
@@ -78,18 +85,18 @@ Route::middleware(['auth', 'role:keuangan', 'log.sensitive'])
         
         //-------------------------------- PENGAJUAN -------------------------------//
         // Resource dasar untuk pengajuan
-        Route::resource('pengajuans', App\Http\Controllers\PengajuanController::class)->parameter('pengajuans', 'pengajuan');
+        Route::resource('pengajuans', PengajuanController::class)->parameter('pengajuans', 'pengajuan');
         
         // Nested routes untuk detail pengajuan - diatur dalam controller yang sama
         Route::prefix('pengajuans/{pengajuan}')->group(function() {
             // Detail pengajuan routes
-            Route::get('detail/create', [App\Http\Controllers\PengajuanController::class, 'createDetail'])->name('pengajuans.detail.create');
-            Route::post('detail', [App\Http\Controllers\PengajuanController::class, 'storeDetail'])->name('pengajuans.detail.store');
-            Route::get('detail/{detail}/edit', [App\Http\Controllers\PengajuanController::class, 'editDetail'])->name('pengajuans.detail.edit');
-            Route::put('detail/{detail}', [App\Http\Controllers\PengajuanController::class, 'updateDetail'])->name('pengajuans.detail.update');
-            Route::delete('detail/{detail}', [App\Http\Controllers\PengajuanController::class, 'destroyDetail'])->name('pengajuans.detail.destroy');
-            Route::patch('detail/{detail}/status', [App\Http\Controllers\PengajuanController::class, 'setStatus'])->name('pengajuans.detail.status');
-            Route::get('invoice', [App\Http\Controllers\PengajuanController::class, 'printInvoice'])->name('pengajuans.invoice');
+            Route::get('detail/create', [PengajuanController::class, 'createDetail'])->name('pengajuans.detail.create');
+            Route::post('detail', [PengajuanController::class, 'storeDetail'])->name('pengajuans.detail.store');
+            Route::get('detail/{detail}/edit', [PengajuanController::class, 'editDetail'])->name('pengajuans.detail.edit');
+            Route::put('detail/{detail}', [PengajuanController::class, 'updateDetail'])->name('pengajuans.detail.update');
+            Route::delete('detail/{detail}', [PengajuanController::class, 'destroyDetail'])->name('pengajuans.detail.destroy');
+            Route::patch('detail/{detail}/status', [PengajuanController::class, 'setStatus'])->name('pengajuans.detail.status');
+            Route::get('invoice', [PengajuanController::class, 'printInvoice'])->name('pengajuans.invoice');
         });
     });
 
