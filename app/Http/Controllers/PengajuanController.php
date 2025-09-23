@@ -27,9 +27,9 @@ class PengajuanController extends Controller
         // Ambil user yang sedang login
         $user = Auth::user();
 
-        // Filter pengajuan berdasarkan nama_karyawan = nama user login
+        // Filter pengajuan berdasarkan user_id yang login (yang membuat pengajuan)
         $pengajuans = Pengajuan::with('detailPengajuans')
-            ->where('nama_karyawan', $user->name)
+            ->where('user_id', $user->id)
             ->when($keyword, function($query) use ($keyword) {
                 $query->where(function($q) use ($keyword) {
                     $q->where('no_surat', 'like', "%{$keyword}%")
@@ -81,6 +81,9 @@ class PengajuanController extends Controller
         // Buat pengajuan baru dengan transaksi DB untuk memastikan konsistensi data
         DB::beginTransaction();
         try {
+            // Dapatkan user yang sedang login
+            $user = Auth::user();
+            
             // Simpan data pengajuan dengan nomor surat temporary terlebih dahulu
             $pengajuan = Pengajuan::create([
                 'tgl_pengajuan' => $validated['tgl_pengajuan'],
@@ -88,6 +91,7 @@ class PengajuanController extends Controller
                 'nama_karyawan' => $validated['nama_karyawan'],
                 'divisi' => $validated['divisi'],
                 'plot' => $validated['plot'],
+                'user_id' => $user->id, // Tambahkan user_id yang login
             ]);
             
             // Generate nomor surat final dengan ID pengajuan yang sudah dibuat
@@ -123,12 +127,22 @@ class PengajuanController extends Controller
 
     public function show(Pengajuan $pengajuan)
     {
+        // Pastikan user hanya dapat melihat pengajuan miliknya
+        if ($pengajuan->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         $pengajuan->load('detailPengajuans');
         return view('keuangan.pengajuan.show', compact('pengajuan'));
     }
 
     public function edit(Pengajuan $pengajuan)
     {
+        // Pastikan user hanya dapat mengedit pengajuan miliknya
+        if ($pengajuan->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         // Ambil daftar nama barang untuk dropdown
         $namaBarangs = NamaBarang::all();
         
@@ -146,6 +160,11 @@ class PengajuanController extends Controller
      */
     public function update(Request $request, Pengajuan $pengajuan)
     {
+        // Pastikan user hanya dapat mengupdate pengajuan miliknya
+        if ($pengajuan->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         $validated = $request->validate([
             'tgl_pengajuan' => 'required|date',
             'nama_karyawan' => 'required|string|max:255',
@@ -164,6 +183,11 @@ class PengajuanController extends Controller
      */
     public function destroy(Pengajuan $pengajuan)
     {
+        // Pastikan user hanya dapat menghapus pengajuan miliknya
+        if ($pengajuan->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         // Hapus semua detail pengajuan terlebih dahulu
         DB::beginTransaction();
         try {
@@ -184,6 +208,11 @@ class PengajuanController extends Controller
      */
     public function createDetail(Pengajuan $pengajuan)
     {
+        // Pastikan user hanya dapat menambah detail pada pengajuan miliknya
+        if ($pengajuan->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         $plotList = AkunBiaya::all();
         $namaBarangs = NamaBarang::all();
         return view('keuangan.pengajuan.create_detail', compact('pengajuan', 'namaBarangs', 'plotList'));
@@ -194,6 +223,11 @@ class PengajuanController extends Controller
      */
     public function storeDetail(Request $request, Pengajuan $pengajuan)
     {
+        // Pastikan user hanya dapat menambah detail pada pengajuan miliknya
+        if ($pengajuan->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         $validated = $request->validate([
             'items_data' => 'required|json',
         ]);
@@ -242,6 +276,11 @@ class PengajuanController extends Controller
      */
     public function editDetail(Pengajuan $pengajuan, DetailPengajuan $detail)
     {
+        // Pastikan user hanya dapat mengedit detail pada pengajuan miliknya
+        if ($pengajuan->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         $namaBarangs = NamaBarang::all();
         return view('keuangan.pengajuan.edit_detail', compact('pengajuan', 'detail', 'namaBarangs'));
     }
@@ -251,6 +290,11 @@ class PengajuanController extends Controller
      */
     public function updateDetail(Request $request, Pengajuan $pengajuan, DetailPengajuan $detail)
     {
+        // Pastikan user hanya dapat mengupdate detail pada pengajuan miliknya
+        if ($pengajuan->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         $validated = $request->validate([
             'nama_barang' => 'required|exists:nama_barangs,id',
             'qty' => 'required|numeric|min:1',
@@ -289,6 +333,11 @@ class PengajuanController extends Controller
      */
     public function destroyDetail(Pengajuan $pengajuan, DetailPengajuan $detail)
     {
+        // Pastikan user hanya dapat menghapus detail pada pengajuan miliknya
+        if ($pengajuan->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         DB::beginTransaction();
         try {
             // Hapus detail
@@ -336,6 +385,11 @@ class PengajuanController extends Controller
      */
     public function printInvoice(Pengajuan $pengajuan)
     {
+        // Pastikan user hanya dapat mencetak invoice pengajuan miliknya
+        if ($pengajuan->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         // Load pengajuan with its details and related items
         $pengajuan->load(['detailPengajuans.namaBarang']);
         

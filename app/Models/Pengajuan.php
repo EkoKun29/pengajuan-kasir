@@ -18,8 +18,17 @@ class Pengajuan extends Model
         'nama_karyawan',
         'divisi',
         'plot',
-        'total'
+        'total',
+        'user_id'
     ];
+    
+    /**
+     * Get the user that owns the pengajuan.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     /**
      * Get the detail pengajuan associated with the pengajuan.
