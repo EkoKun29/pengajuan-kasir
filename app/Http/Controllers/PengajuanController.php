@@ -23,8 +23,13 @@ class PengajuanController extends Controller
     {
         $keyword = $request->query('search');
         $status = $request->query('status');
-        
+
+        // Ambil user yang sedang login
+        $user = Auth::user();
+
+        // Filter pengajuan berdasarkan nama_karyawan = nama user login
         $pengajuans = Pengajuan::with('detailPengajuans')
+            ->where('nama_karyawan', $user->name)
             ->when($keyword, function($query) use ($keyword) {
                 $query->where(function($q) use ($keyword) {
                     $q->where('no_surat', 'like', "%{$keyword}%")
@@ -35,7 +40,7 @@ class PengajuanController extends Controller
             ->latest()
             ->paginate(10)
             ->appends(['search' => $keyword, 'status' => $status]);
-        
+
         return view('keuangan.pengajuan.index', compact('pengajuans', 'keyword', 'status'));
     }
 
