@@ -30,16 +30,16 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'      => 'required|string|max:100|regex:/^[a-zA-Z\s]+$/',
-            'email'     => 'required|email|unique:users,email|max:255',
-            'role'      => 'required|in:admin,direktur,keuangan',
-            'password'  => 'required|min:8|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/',
-            'no_wa'     => 'nullable|string|unique:users,no_wa',
+            'name'     => 'required|string|max:100|regex:/^[a-zA-Z\s]+$/',
+            'email'    => 'required|email|unique:users,email|max:255',
+            'role'     => 'required|in:admin,direktur,keuangan',
+            'password' => 'required|string|min:6|confirmed',
+            'no_wa'    => 'nullable|string|unique:users,no_wa',
         ], [
             'name.regex' => 'Nama hanya boleh berisi huruf dan spasi.',
-            'password.regex' => 'Password harus mengandung huruf besar, huruf kecil, angka, dan karakter khusus.',
         ]);
 
+        // hash password
         $validated['password'] = Hash::make($validated['password']);
         $validated['no_wa'] = $validated['no_wa'] ?? '62';
 
@@ -51,24 +51,22 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $rules = [
-            'name'      => 'required|string|max:100|regex:/^[a-zA-Z\s]+$/',
-            'email'     => 'required|email|unique:users,email,' . $user->id . '|max:255',
-            'role'      => 'required|in:admin,keuangan,direktur',
-            'no_wa'     => 'nullable|string|unique:users,no_wa,' . $user->id,
+            'name'  => 'required|string|max:100|regex:/^[a-zA-Z\s]+$/',
+            'email' => 'required|email|unique:users,email,' . $user->id . '|max:255',
+            'role'  => 'required|in:admin,keuangan,direktur',
+            'no_wa' => 'nullable|string|unique:users,no_wa,' . $user->id,
         ];
-        
-        // Validasi password hanya jika diisi
+
         if ($request->filled('password')) {
-            $rules['password'] = 'required|min:8|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/';
+            $rules['password'] = 'required|string|min:8|confirmed';
         }
 
         $validated = $request->validate($rules, [
             'name.regex' => 'Nama hanya boleh berisi huruf dan spasi.',
-            'password.regex' => 'Password harus mengandung huruf besar, huruf kecil, angka, dan karakter khusus.',
         ]);
 
         if ($request->filled('password')) {
-            $validated['password'] = Hash::make($validated['password']);
+            $validated['password'] = Hash::make($request->password);
         } else {
             unset($validated['password']);
         }
@@ -79,6 +77,7 @@ class UserController extends Controller
 
         return back()->with('success', 'User berhasil diperbarui!');
     }
+
 
     public function destroy(User $user)
     {

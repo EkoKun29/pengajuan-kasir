@@ -30,7 +30,7 @@
         }
         .company-logo {
             width: 80px;
-            height: 80px;
+            height: auto;
             margin-right: 20px;
         }
         .company-info {
@@ -142,6 +142,16 @@
             width: 100%;
             margin: 35px auto 5px auto;
         }
+
+        .document-info p {
+            display: flex;
+        }
+
+        .document-info .label {
+            width: 120px;
+            font-weight: bold;
+        }
+
         
         @media print {
             @page {
@@ -175,28 +185,29 @@
 
         <!-- Judul Form -->
         <div class="form-title">
-            <h2>PENGAJUAN ANGGARAN RUTIN DO. DAN DISTRIBUSI</h2>
+            <h2>PENGAJUAN ANGGARAN</h2>
         </div>
 
         <!-- Info Dokumen -->
         <div class="document-info">
-            <p>NOMOR SURAT : {{ $pengajuan->no_surat }}</p>
-            <p>DIVISI : {{ $pengajuan->divisi }}</p>
+            <p style="font-weight: bold"><span class="label">NOMOR SURAT</span> : {{ $pengajuan->no_surat }}</p>
+            <p style="font-weight: bold"><span class="label">DIVISI</span>       : {{ $pengajuan->divisi }}</p>
         </div>
+
 
         <!-- Tabel Items -->
         <table class="items-table">
             <thead>
                 <tr>
                     <th style="width: 5%;">NO</th>
-                    <th style="width: 25%;">PLOT YANG DIGUNAKAN</th>
+                    <th style="width: 20%;">PLOT YANG DIGUNAKAN</th>
                     <th style="width: 20%;">AKUN BIAYA</th>
-                    <th style="width: 20%;">YANG MENGAJUKAN</th>
+                    <th style="width: 10%;">YANG MENGAJUKAN</th>
                     <th style="width: 15%;">BARANG YANG DIAJUKAN</th>
-                    <th style="width: 5%;">QTY</th>
-                    <th style="width: 15%;">HARGA</th>
-                    <th style="width: 15%;">TOTAL</th>
-                    <th style="width: 15%;">KETERANGAN PAJAK</th>
+                    <th style="width: 3%;">QTY</th>
+                    <th style="width: 10%;">HARGA</th>
+                    <th style="width: 9%;">TOTAL</th>
+                    <th style="width: 15%;">KET. PAJAK</th>
                 </tr>
             </thead>
             <tbody>
@@ -204,7 +215,7 @@
                 <tr>
                     <td class="text-center">{{ $index + 1 }}</td>
                     <td>{{ $pengajuan->plot }}</td>
-                    <td>BIAYA OPERASIONAL</td>
+                    <td>{{ $detail->keperluan_beban }}</td>
                     <td>{{ $pengajuan->nama_karyawan }}</td>
                     <td>{{ $detail->nama_barang }}</td>
                     <td class="text-center">{{ $detail->qty }}</td>
@@ -216,12 +227,32 @@
             </tbody>
             <tfoot>
                 <tr class="total-row">
-                    <td colspan="7" class="text-center"><strong>GRAND TOTAL</strong></td>
-                    <td colspan="2" class="text-right"><strong>Rp {{ number_format($totalAmount, 0, ',', '.') }}</strong></td>
+                    <td colspan="7" class="text-center"><strong>TOTAL</strong></td>
+                    <td colspan="1" class="text-right"><strong>Rp {{ number_format($totalAmount, 0, ',', '.') }}</strong></td>
                 </tr>
             </tfoot>
         </table>
 
+        <table style="width:100%; border-collapse: collapse; text-align:center; font-weight:bold;">
+            <tr>
+            <td colspan="3" style="border:1px solid black;">Menyetujui,</td>
+            </tr>
+            <tr>
+            <td style="border:1px solid black; height:60px;"></td>
+            <td style="border:1px solid black;"></td>
+            <td style="border:1px solid black;"></td>
+            </tr>
+            <tr>
+            <td style="border:1px solid black;">Ahmad Ansori</td>
+            <td style="border:1px solid black;">Sukisno</td>
+            <td style="border:1px solid black;">Noviyanto</td>
+            </tr>
+            <tr>
+            <td style="border:1px solid black;">Staff Tata Kelola Sistem & Fasilitas</td>
+            <td style="border:1px solid black;">Kepala Gudang Arjuna</td>
+            <td style="border:1px solid black;">Kepala Gudang Abimanyu</td>
+            </tr>
+        </table>
         <!-- Area Tanda Tangan -->
         <div class="signature-section">
             <div class="full-width">

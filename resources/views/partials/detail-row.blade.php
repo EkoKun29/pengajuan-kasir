@@ -1,16 +1,13 @@
 <tr class="hover:bg-gray-50 transition-colors">
     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $index + 1 }}</td>
     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-        {{ $detail->namaBarang->nama_barang ?? 'Barang tidak ditemukan' }}
+        {{ $detail->nama_barang ?? 'Barang tidak ditemukan' }}
     </td>
     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $detail->qty }}</td>
     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Rp {{ number_format($detail->harga, 0, ',', '.') }}</td>
     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Rp {{ number_format($detail->total, 0, ',', '.') }}</td>
     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-        {{ $detail->berpajak }}
-        @if($detail->keterangan_pajak)
-        <span class="block text-xs text-gray-500">{{ $detail->keterangan_pajak }}</span>
-        @endif
+        {{ $detail->keperluan_beban }}
     </td>
     <td class="px-6 py-4 whitespace-nowrap">
         <div class="flex items-center space-x-2">

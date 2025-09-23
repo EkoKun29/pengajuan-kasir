@@ -26,7 +26,7 @@
             </div>
             <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                 {{-- Search Form --}}
-                <form method="GET" action="{{ auth()->user()->role === 'keuangan' ? route('keuangan.barangs.index') : route('admin.barangs.index') }}" class="flex gap-2">
+                <form method="GET" action="{{ route('admin.barangs.index') }}" class="flex gap-2">
                     <div class="relative">
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari barang....."
                                class="border-gray-300 rounded-lg px-4 py-2.5 text-sm w-64 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
@@ -80,7 +80,7 @@
                                 </svg>
                             </button>
                             {{-- Delete Button --}}
-                            <form action="{{ route('keuangan.barangs.destroy', $barang) }}" method="POST" class="inline delete-form">
+                            <form action="{{ route('admin.barangs.destroy', $barang) }}" method="POST" class="inline delete-form">
                                 @csrf @method('DELETE')
                                 <button type="button" title="Hapus" onclick="confirmDelete(this.closest('form'), '{{ $barang->name }}')"
                                         class="inline-flex items-center p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
@@ -149,7 +149,7 @@
                                 </button>
                             </div>
                             <div class="px-6 py-4">
-                                <form method="POST" action="{{ route('keuangan.barangs.update', $barang) }}" class="space-y-4">
+                                <form method="POST" action="{{ route('admin.barangs.update', $barang) }}" class="space-y-4">
                                     @csrf @method('PUT')
                                     <div class="grid gap-4">
                                         <div>
@@ -199,7 +199,7 @@
                 <h2 class="text-lg font-semibold text-gray-900">Tambah Barang</h2>
             </div>
             <div class="px-6 py-4">
-                <form method="POST" action="{{ route('keuangan.barangs.store') }}" id="createForm" class="space-y-4">
+                <form method="POST" action="{{ route('admin.barangs.store') }}" id="createForm" class="space-y-4">
                     @csrf
                     <div class="grid gap-4">
                         <div>

@@ -63,7 +63,7 @@
                         <p class="text-gray-900">{{ $pengajuan->divisi }}</p>
                     </div>
                     <div>
-                        <p class="text-sm font-medium text-gray-500">Plot</p>
+                        <p class="text-sm font-medium text-gray-500">Plot yang Digunakan</p>
                         <p class="text-gray-900">{{ $pengajuan->plot ?: '-' }}</p>
                     </div>
 
@@ -95,7 +95,7 @@
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Qty</th>
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Harga</th>
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Total</th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Pajak</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Akun Biaya</th>
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
                             </tr>
                         </thead>
