@@ -81,10 +81,10 @@
                         <i class="fas fa-user-cog w-4 h-4 mr-3"></i>
                         <span class="sidebar-text">User</span>
                     </a>
-                    {{-- <a href="{{ route('admin.audit.index') }}" class="flex items-center px-3 py-2 text-sm text-gray-600 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-all duration-200">
+                    <a href="{{ route('admin.audit.index') }}" class="flex items-center px-3 py-2 text-sm text-gray-600 rounded-md hover:bg-gray-100 hover:text-blue-600 transition-all duration-200">
                         <i class="fas fa-history w-4 h-4 mr-3"></i>
                         <span class="sidebar-text">Audit Log</span>
-                    </a> --}}
+                    </a>
                 </div>
             </li>
 
