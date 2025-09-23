@@ -31,6 +31,96 @@
             </div>
         </div>
     </div>
+    
+    {{-- STATS SUMMARY --}}
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center">
+                <div class="rounded-full bg-blue-100 p-3 mr-4">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900">Total Pengajuan</h3>
+                    <p class="text-2xl font-bold text-blue-600">
+                        @php
+                            $totalPengajuans = App\Models\Pengajuan::count();
+                        @endphp
+                        {{ number_format($totalPengajuans) }}
+                    </p>
+                    <p class="text-sm text-gray-500">Seluruh pengajuan</p>
+                </div>
+            </div>
+        </div>
+        
+        {{-- Pending Approval Card --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center">
+                <div class="rounded-full bg-yellow-100 p-3 mr-4">
+                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900">Menunggu</h3>
+                    <p class="text-2xl font-bold text-yellow-600">
+                        @php
+                            $pendingItems = App\Models\DetailPengajuan::where(function($query) {
+                                $query->whereNull('status_persetujuan')
+                                    ->orWhere('status_persetujuan', 'pending')
+                                    ->orWhere('status_persetujuan', 'menunggu');
+                            })->count();
+                        @endphp
+                        {{ number_format($pendingItems) }}
+                    </p>
+                    <p class="text-sm text-gray-500">Item yang menunggu persetujuan</p>
+                </div>
+            </div>
+        </div>
+        
+        {{-- Approved Card --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center">
+                <div class="rounded-full bg-green-100 p-3 mr-4">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900">Disetujui</h3>
+                    <p class="text-2xl font-bold text-green-600">
+                        @php
+                            $approvedItems = App\Models\DetailPengajuan::where('status_persetujuan', 'approved')->count();
+                        @endphp
+                        {{ number_format($approvedItems) }}
+                    </p>
+                    <p class="text-sm text-gray-500">Item yang telah disetujui</p>
+                </div>
+            </div>
+        </div>
+        
+        {{-- Rejected Card --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center">
+                <div class="rounded-full bg-red-100 p-3 mr-4">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900">Ditolak</h3>
+                    <p class="text-2xl font-bold text-red-600">
+                        @php
+                            $rejectedItems = App\Models\DetailPengajuan::where('status_persetujuan', 'rejected')->count();
+                        @endphp
+                        {{ number_format($rejectedItems) }}
+                    </p>
+                    <p class="text-sm text-gray-500">Item yang ditolak</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {{-- TABLE --}}
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">

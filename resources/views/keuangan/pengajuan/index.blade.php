@@ -33,6 +33,73 @@
             </div>
         </div>
     </div>
+    
+    {{-- STATUS CARDS --}}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {{-- Approved Card --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center">
+                <div class="rounded-full bg-green-100 p-3 mr-4">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900">Disetujui</h3>
+                    <p class="text-2xl font-bold text-green-600">
+                        {{ App\Models\DetailPengajuan::whereHas('pengajuan', function($query) {
+                            $query->where('user_id', Auth::id());
+                        })->where('status_persetujuan', 'approved')->count() }}
+                    </p>
+                    <p class="text-sm text-gray-500">Item yang disetujui</p>
+                </div>
+            </div>
+        </div>
+        
+        {{-- Pending Card --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center">
+                <div class="rounded-full bg-yellow-100 p-3 mr-4">
+                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900">Menunggu</h3>
+                    <p class="text-2xl font-bold text-yellow-600">
+                        {{ App\Models\DetailPengajuan::whereHas('pengajuan', function($query) {
+                            $query->where('user_id', Auth::id());
+                        })->where(function($query) {
+                            $query->whereNull('status_persetujuan')
+                                ->orWhere('status_persetujuan', 'pending')
+                                ->orWhere('status_persetujuan', 'menunggu');
+                        })->count() }}
+                    </p>
+                    <p class="text-sm text-gray-500">Item yang menunggu persetujuan</p>
+                </div>
+            </div>
+        </div>
+        
+        {{-- Rejected Card --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center">
+                <div class="rounded-full bg-red-100 p-3 mr-4">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900">Ditolak</h3>
+                    <p class="text-2xl font-bold text-red-600">
+                        {{ App\Models\DetailPengajuan::whereHas('pengajuan', function($query) {
+                            $query->where('user_id', Auth::id());
+                        })->where('status_persetujuan', 'rejected')->count() }}
+                    </p>
+                    <p class="text-sm text-gray-500">Item yang ditolak</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {{-- TABLE --}}
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
