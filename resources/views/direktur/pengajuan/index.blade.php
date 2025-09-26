@@ -33,38 +33,41 @@
     </div>
     
     {{-- STATS SUMMARY --}}
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {{-- Total Pengajuan Card --}}
+        <a href="{{ route('direktur.pengajuan.index') }}" 
+           class="block {{ !request('status') ? 'bg-blue-50 border-blue-200 ring-1 ring-blue-500' : 'bg-white border-gray-100 hover:shadow-md' }} rounded-lg shadow-sm border p-3 transition-all">
             <div class="flex items-center">
-                <div class="rounded-full bg-blue-100 p-3 mr-4">
-                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="rounded-full bg-blue-100 p-2 mr-3">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                     </svg>
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900">Total Pengajuan</h3>
-                    <p class="text-2xl font-bold text-blue-600">
+                    <h3 class="text-base font-semibold text-gray-900">Total Pengajuan</h3>
+                    <p class="text-xl font-bold text-blue-600">
                         @php
                             $totalPengajuans = App\Models\Pengajuan::count();
                         @endphp
                         {{ number_format($totalPengajuans) }}
                     </p>
-                    <p class="text-sm text-gray-500">Seluruh pengajuan</p>
+                    <p class="text-xs text-gray-500">Seluruh pengajuan</p>
                 </div>
             </div>
-        </div>
+        </a>
         
-        {{-- Pending Approval Card --}}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        {{-- Pending Card --}}
+        <a href="{{ route('direktur.pengajuan.index', ['status' => 'menunggu']) }}"
+           class="block {{ request('status') == 'menunggu' ? 'bg-yellow-50 border-yellow-200 ring-1 ring-yellow-500' : 'bg-white border-gray-100 hover:shadow-md' }} rounded-lg shadow-sm border p-3 transition-all">
             <div class="flex items-center">
-                <div class="rounded-full bg-yellow-100 p-3 mr-4">
-                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="rounded-full bg-yellow-100 p-2 mr-3">
+                    <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900">Menunggu</h3>
-                    <p class="text-2xl font-bold text-yellow-600">
+                    <h3 class="text-base font-semibold text-gray-900">Menunggu</h3>
+                    <p class="text-xl font-bold text-yellow-600">
                         @php
                             $pendingItems = App\Models\DetailPengajuan::where(function($query) {
                                 $query->whereNull('status_persetujuan')
@@ -74,54 +77,81 @@
                         @endphp
                         {{ number_format($pendingItems) }}
                     </p>
-                    <p class="text-sm text-gray-500">Item yang menunggu persetujuan</p>
+                    <p class="text-xs text-gray-500">Item yang menunggu persetujuan</p>
                 </div>
             </div>
-        </div>
+        </a>
         
         {{-- Approved Card --}}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <a href="{{ route('direktur.pengajuan.index', ['status' => 'approved']) }}"
+           class="block {{ request('status') == 'approved' ? 'bg-green-50 border-green-200 ring-1 ring-green-500' : 'bg-white border-gray-100 hover:shadow-md' }} rounded-lg shadow-sm border p-3 transition-all">
             <div class="flex items-center">
-                <div class="rounded-full bg-green-100 p-3 mr-4">
-                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="rounded-full bg-green-100 p-2 mr-3">
+                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900">Disetujui</h3>
-                    <p class="text-2xl font-bold text-green-600">
+                    <h3 class="text-base font-semibold text-gray-900">Disetujui</h3>
+                    <p class="text-xl font-bold text-green-600">
                         @php
                             $approvedItems = App\Models\DetailPengajuan::where('status_persetujuan', 'approved')->count();
                         @endphp
                         {{ number_format($approvedItems) }}
                     </p>
-                    <p class="text-sm text-gray-500">Item yang telah disetujui</p>
+                    <p class="text-xs text-gray-500">Item yang telah disetujui</p>
                 </div>
             </div>
-        </div>
+        </a>
         
         {{-- Rejected Card --}}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <a href="{{ route('direktur.pengajuan.index', ['status' => 'rejected']) }}"
+           class="block {{ request('status') == 'rejected' ? 'bg-red-50 border-red-200 ring-1 ring-red-500' : 'bg-white border-gray-100 hover:shadow-md' }} rounded-lg shadow-sm border p-3 transition-all">
             <div class="flex items-center">
-                <div class="rounded-full bg-red-100 p-3 mr-4">
-                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="rounded-full bg-red-100 p-2 mr-3">
+                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900">Ditolak</h3>
-                    <p class="text-2xl font-bold text-red-600">
+                    <h3 class="text-base font-semibold text-gray-900">Ditolak</h3>
+                    <p class="text-xl font-bold text-red-600">
                         @php
                             $rejectedItems = App\Models\DetailPengajuan::where('status_persetujuan', 'rejected')->count();
                         @endphp
                         {{ number_format($rejectedItems) }}
                     </p>
-                    <p class="text-sm text-gray-500">Item yang ditolak</p>
+                    <p class="text-xs text-gray-500">Item yang ditolak</p>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
 
+    {{-- Active Filter Status --}}
+    @if(request('status'))
+    <div class="flex items-center bg-white rounded-lg shadow-sm border border-gray-100 p-3 mb-3">
+        <p class="mr-2 text-xs text-gray-600">Filter aktif:</p>
+        <div class="flex items-center bg-gray-100 rounded-lg px-2 py-1">
+            <span class="text-xs font-medium mr-2">
+                @if(request('status') == 'approved')
+                    <span class="text-green-600">Disetujui</span>
+                @elseif(request('status') == 'menunggu')
+                    <span class="text-yellow-600">Menunggu</span>
+                @elseif(request('status') == 'rejected')
+                    <span class="text-red-600">Ditolak</span>
+                @else
+                    <span>{{ request('status') }}</span>
+                @endif
+            </span>
+            <a href="{{ route('direktur.pengajuan.index') }}" class="text-gray-500 hover:text-gray-700">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </a>
+        </div>
+    </div>
+    @endif
+    
     {{-- TABLE --}}
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">

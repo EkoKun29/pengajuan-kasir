@@ -21,21 +21,35 @@ class PengajuanApprovalController extends Controller
         $keyword = $request->query('search');
         $status = $request->query('status');
         
-        $pengajuans = Pengajuan::with(['detailPengajuans' => function($query) use ($status) {
-            if ($status) {
-                $query->where('status_persetujuan', $status);
-            }
-        }])
-            ->when($keyword, function($query) use ($keyword) {
-                $query->where(function($q) use ($keyword) {
-                    $q->where('no_surat', 'like', "%{$keyword}%")
-                      ->orWhere('nama_karyawan', 'like', "%{$keyword}%")
-                      ->orWhere('divisi', 'like', "%{$keyword}%");
-                });
-            })
-            ->latest()
-            ->paginate(10)
-            ->appends(['search' => $keyword, 'status' => $status]);
+        $query = Pengajuan::with('detailPengajuans');
+        
+        // Filter berdasarkan keyword jika ada
+        if ($keyword) {
+            $query->where(function($q) use ($keyword) {
+                $q->where('no_surat', 'like', "%{$keyword}%")
+                  ->orWhere('nama_karyawan', 'like', "%{$keyword}%")
+                  ->orWhere('divisi', 'like', "%{$keyword}%");
+            });
+        }
+        
+        // Filter berdasarkan status jika ada
+        if ($status) {
+            $query->whereHas('detailPengajuans', function($query) use ($status) {
+                if ($status === 'menunggu') {
+                    $query->where(function($q) {
+                        $q->whereNull('status_persetujuan')
+                          ->orWhere('status_persetujuan', 'pending')
+                          ->orWhere('status_persetujuan', 'menunggu');
+                    });
+                } else {
+                    $query->where('status_persetujuan', $status);
+                }
+            });
+        }
+        
+        $pengajuans = $query->latest()
+                          ->paginate(10)
+                          ->appends(['search' => $keyword, 'status' => $status]);
         
         return view('direktur.pengajuan.index', compact('pengajuans', 'keyword', 'status'));
     }

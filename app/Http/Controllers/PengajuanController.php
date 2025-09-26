@@ -28,7 +28,7 @@ class PengajuanController extends Controller
         $user = Auth::user();
 
         // Filter pengajuan berdasarkan user_id yang login (yang membuat pengajuan)
-        $pengajuans = Pengajuan::with('detailPengajuans')
+        $query = Pengajuan::with('detailPengajuans')
             ->where('user_id', $user->id)
             ->when($keyword, function($query) use ($keyword) {
                 $query->where(function($q) use ($keyword) {
@@ -36,10 +36,26 @@ class PengajuanController extends Controller
                       ->orWhere('nama_karyawan', 'like', "%{$keyword}%")
                       ->orWhere('divisi', 'like', "%{$keyword}%");
                 });
-            })
-            ->latest()
-            ->paginate(10)
-            ->appends(['search' => $keyword, 'status' => $status]);
+            });
+        
+        // Filter berdasarkan status jika ada
+        if ($status) {
+            $query->whereHas('detailPengajuans', function($query) use ($status) {
+                if ($status === 'menunggu') {
+                    $query->where(function($q) {
+                        $q->whereNull('status_persetujuan')
+                          ->orWhere('status_persetujuan', 'pending')
+                          ->orWhere('status_persetujuan', 'menunggu');
+                    });
+                } else {
+                    $query->where('status_persetujuan', $status);
+                }
+            });
+        }
+        
+        $pengajuans = $query->latest()
+                           ->paginate(10)
+                           ->appends(['search' => $keyword, 'status' => $status]);
 
         return view('keuangan.pengajuan.index', compact('pengajuans', 'keyword', 'status'));
     }
